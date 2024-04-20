@@ -1,0 +1,19 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.ilk
+*.manifest
+*.pdb
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+
+out/
+build/
+.vs/
+.vscode/
+*.mkv
