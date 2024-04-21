@@ -133,6 +133,7 @@ int __cdecl main() {
 
   // Play the sound buffer
   render_song(waveBuffer);
+  //CreateThread(0, 0, (LPTHREAD_START_ROUTINE)render_song, waveBuffer, 0, 0);
   FILE* f = fopen("buffer", "wb");
   fwrite(waveBuffer, sizeof(float), SU_BUFFER_LENGTH, f);
   fclose(f);

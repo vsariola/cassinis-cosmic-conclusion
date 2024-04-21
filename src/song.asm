@@ -1,7 +1,15 @@
 bits 32
 
+%define STEREO
+
 SAMPLERATE equ 44100 ; remember to change the timediv also
-SAMPLES equ SAMPLERATE*2*144
+SECONDS equ 148
+%ifdef STEREO
+CHANNEL_COUNT equ 2
+%else
+CHANNEL_COUNT equ 1
+%endif
+BUFFER_LENGTH equ SAMPLERATE*CHANNEL_COUNT*SECONDS
 JMAX equ 4
 IMAX equ 3
 NOISESTEPS equ 16
@@ -18,8 +26,8 @@ _render_song@4:
 	popad
 	ret 	4
 
-; this is the real main function of the synth that assumes esi = pointer to buffer
-; clobbers eax, ecx, edx & esi is advanced to the end of the buffer
+; this is the real main function of the synth that assumes edi = pointer to buffer
+; clobbers eax, ecx, edx & edi is advanced to the end of the buffer
 section		.syntmain	code	align=1
 global _render_song_main@0
 _render_song_main@0:
@@ -47,7 +55,7 @@ _render_song_main@0:
 	stosd   		; store x into buffer
 	pop 	eax
 	inc 	eax
-	cmp 	eax, SAMPLES
+	cmp 	eax, BUFFER_LENGTH
 	jl 		.mainloop
 	ret
 
@@ -93,16 +101,19 @@ inner:
 	fsin           		; o=sin(i*j*t*exp2(mod(r-v,3)/6+8.5)) 3 t q
 	fld  	st2       		; t o 3 t q
 	fidiv 	dword [esp] 	; t/j o 3 t q
+	fadd    st3, st0        ; t+=t/j
 	fidiv 	word [c_i47+edx-power] ; t/j/47 o 3 t q
-	fsin           		; sin(t/j/47) o 3 t q
-	fmulp 	st1, st0 		; sin(t/j/47)*o 3 t q
-	fadd 	st0, st0
-	fadd 	st0, st0 		; n=4*sin(t/j/40)*o 3=a t q	
+	fsin           		; sin(t/j/47) o 3 t q	
+	fadd 	st0, st0 
+	fadd 	st0, st0        ; w=4*sin(t/j/47) o 3 t q	
+	fmulp 	st1, st0 		; w 3 t q
 	fxch 	st1, st0 		; a n t q
+%ifdef STEREO
 	test 	edi, 4
 	jz 		.left
 	fadd 	st2, st0 		; t+=3, stereo separation
 .left:
+%endif
 	push 	NOISESTEPS
 	pop  	eax
 .loop3:	      		; a n t
@@ -165,5 +176,11 @@ c_8_5 equ $-2
 c_1_02 equ $-2
 	dw 0x3f82 ; 1.02
 
+
+%ifdef STEREO
 c_timediv equ $-1
 	db 0x44, 0xac, 0x47 ; 88200	
+%else
+c_timediv equ $-1
+	db 0x44, 0x2c, 0x47 ; 88200		
+%endif
