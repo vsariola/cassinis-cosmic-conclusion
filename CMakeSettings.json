@@ -19,6 +19,16 @@
           "name": "_DEBUG",
           "value": "True",
           "type": "BOOL"
+        },
+        {
+          "name": "VALIDATE_SHADERS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "SAVE_MUSIC",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },

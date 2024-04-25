@@ -14,15 +14,14 @@
   0. You just DO WHAT THE FUCK YOU WANT TO.
 */
 
-#version 430
+#version 130
 
 // ----------------------------------------------------------------------------
 // Required prelude
 
-// Set by draw_demo
-uniform int smpl;
 // The result of the shader
-out vec4 fcol;
+out vec3 fcol;
+uniform ivec4 u;
 
 // ----------------------------------------------------------------------------
 // The Shader
@@ -34,37 +33,26 @@ mat2 rot(float a) {
   return mat2(cos(a),sin(a),-sin(a),cos(a));
 }
 
-void main() {
-  vec2 
-    resolution = vec2(1920, 1080)
-  , p = (-resolution+2*gl_FragCoord.xy)/resolution.yy
-  ;
+void main() {   
+  vec2 p = (2*gl_FragCoord.xy-u.xy)/u.y;  
+  vec3 col = vec3(0);
+    
+  int sx = int(gl_FragCoord.x);
+  float t = (sx/4+gl_FragCoord.y*128+65536*u.a)/44100;
 
-  float 
-    musicTime = (smpl==0?(gl_FragCoord.x+resolution.x*gl_FragCoord.y):(smpl+.5*gl_FragCoord.x))*320/441
-  , kickTime  = musicTime/16384
-  , nkickTime = floor(kickTime)
-  , kick      = 1.-(kickTime-nkickTime)*1.6
-  , wave      = float((int(mod(musicTime,int(musicTime)&int(musicTime)>>12)/pow(2,mod(kickTime*16,4)-3))&127)+(int(pow(8e3,kick))&64)&255)/255
-  , l         = length(p)
-  ;
-  
-  vec3
-    col = vec3(0.)
-  , bcol =vec3(.125, .25, .5)
-  ;
-  
-  if (wave+abs(p.y) > 1) col.x += .25;
-
-
-  p *= (1.5+.5*sin(-4*(l+kick)))*rot(-nkickTime+.5*l);
-
-  for (int i = 10; i > 0; --i) {
-    ivec2 ip = ivec2(rot(-.1*kick*i)*p*12);
-    if (abs(ip.x^ip.y)%99%(43^int(nkickTime+20*-abs(p.x*p.y)*step(64,nkickTime)))<i)
-      col += bcol*exp(-.2*i);
-  }
-  col *= l*l;
-  col += .5*kick*kick/l*sqrt(bcol);
-  fcol = vec4(smoothstep(91, 89, kickTime)*(smpl==0?vec3(wave):col), 1);
+  for(float i=1.;i<4.;i++)
+  for(float j=1.;j<5.;j++) {        
+    float r = t*j/32.+i/3.,
+          v = mod(r,1.),
+          a = 3.,
+          s = t*(1+.01*(sx&2)),
+          m = s + 4.*sin(exp2(mod(r-v,3.)/6.+8.5)*t*j*i);
+        for (;a<50.;s += a *= 1.02)
+            m += sin(s*a)/a;
+        if(r<9.)                    
+           col += sin(sin(t/j/47.)*m)*exp2(-v*12.-1./v+5.-i/3.-j/3.);
+                
+    }
+  fcol = trunc(mod(col*((sx&1)==0?256:1),1.0)*256.)/255.;
+   
 }

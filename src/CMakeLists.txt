@@ -1,5 +1,6 @@
 option(MINIFY_SHADERS "Use shader_minified minified shaders instead of hand-tuned ones" ON)
 option(_DEBUG "Enabled debug mode" OFF)
+option(SAVE_MUSIC "Save music to disk" OFF)
 option(VALIDATE_SHADERS "Validate shaders using glslangValidator" ON)
 set(COMPRESS_LEVEL "medium" CACHE STRING "Crinkler compression level: off, light, medium, heavy")
 set_property(CACHE COMPRESS_LEVEL PROPERTY STRINGS OFF LIGHT MEDIUM HEAVY)
@@ -10,7 +11,7 @@ if (NOT YRES)
     set(YRES 1080)
 endif()
  
-message(STATUS "Configuration options (configure with cmake -D...): WINDOW=${WINDOW} MINIFY_SHADERS=${MINIFY_SHADERS} COMPRESS_LEVEL=${COMPRESS_LEVEL}")
+message(STATUS "Configuration options (configure with cmake -D...): MINIFY_SHADERS=${MINIFY_SHADERS} COMPRESS_LEVEL=${COMPRESS_LEVEL}")
 
 set(SHADER_HANDTUNED_INL shader.inl)
 
@@ -35,7 +36,7 @@ if (MINIFY_SHADERS)
     add_custom_command(
         OUTPUT ${SHADER_MINIFIED_INL}
         COMMAND ${SHADER_MINIFIER} -o ${CMAKE_CURRENT_BINARY_DIR}/${SHADER_MINIFIED_INL} ${CMAKE_CURRENT_BINARY_DIR}/${SHADER_CONFIGURED_FRAG}
-        DEPENDS ${SHADER_CONFIGURED_FRAG}
+        DEPENDS ${SHADER_FRAG}
     )    
     set(SHADERS ${SHADER_MINIFIED_INL})
     set(SHADER_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/minified/)    
@@ -44,27 +45,23 @@ else()
     set(SHADER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-add_executable(intro WIN32 "straight-from-the-book.cpp" "song.asm" ${SHADERS})                   
+add_executable(intro WIN32 "main.cpp" ${SHADERS})                   
 target_compile_definitions(intro PUBLIC XRES=${XRES} YRES=${YRES})
 target_link_libraries(intro opengl32.lib winmm.lib)
 target_include_directories(intro PUBLIC ${SHADER_INCLUDE_DIR}) # for the shaders
 
-set_target_properties(intro PROPERTIES
-                      RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/dist
-)
+set_target_properties(intro PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/dist)
 
 set(exename "intro")
 if (NOT YRES EQUAL "1080")
     set(exename "${exename}-${YRES}")
 endif()
-if (WINDOW)
-    set(exename "${exename}-window")
-    message("Defining WINDOW macro")
-    target_compile_definitions(intro PUBLIC WINDOW)
-endif()
 if (_DEBUG)
     set(exename "${exename}-debug")
     target_compile_definitions(intro PUBLIC _DEBUG)
+endif()
+if (SAVE_MUSIC)    
+    target_compile_definitions(intro PUBLIC SAVE_MUSIC)
 endif()
 
 if(NOT COMPRESS_LEVEL STREQUAL OFF)
@@ -78,7 +75,7 @@ endif()
 
 if (NOT COMPRESS_LEVEL STREQUAL OFF)
     message(STATUS "Crinkler found at: ${CRINKLER}")      
-    set(CRINKLER_FLAGS "/RANGE:opengl32 /RANGE:winmm /PROGRESSGUI /UNSAFEIMPORT /UNALIGNCODE /TINYHEADER /TINYIMPORT /NOINITIALIZERS /HASHSIZE:1000 /REPORT:crinkler_report.html")
+    set(CRINKLER_FLAGS "/ENTRY:entrypoint /OVERRIDEALIGNMENTS:24 /RANGE:opengl32 /RANGE:winmm /PROGRESSGUI /UNSAFEIMPORT /UNALIGNCODE /TINYHEADER /TINYIMPORT /NOINITIALIZERS /HASHSIZE:1000 /REPORT:crinkler_report.html")
 	target_compile_definitions(intro PUBLIC USE_CRINKLER)
     # TBD: do we add /SATURATE
     if (COMPRESS_LEVEL STREQUAL LIGHT) 
@@ -89,11 +86,10 @@ if (NOT COMPRESS_LEVEL STREQUAL OFF)
     else()
         set(CRINKLER_FLAGS "${CRINKLER_FLAGS} /HASHTRIES:300 /COMPMODE:SLOW /ORDERTRIES:9000")
         set(exename "${exename}-medium")
-    endif()   
-    set_property(TARGET intro APPEND PROPERTY LINK_FLAGS " /ENTRY:entrypoint")   
+    endif()       
 
     # we drop the whole manifest creation from the front; did not find a way to disable it from CMake otherwise        
-    set (CMAKE_C_LINK_EXECUTABLE "${CRINKLER} <OBJECTS> /out:<TARGET> ${CRINKLER_FLAGS} <LINK_LIBRARIES>")	    
+    set (CMAKE_CXX_LINK_EXECUTABLE "${CRINKLER} <OBJECTS> /out:<TARGET> ${CRINKLER_FLAGS} <LINK_LIBRARIES>")	    
 else()
     set(exename "${exename}-uncompressed")
     set_property(TARGET intro APPEND PROPERTY LINK_FLAGS " /ENTRY:mainCRTStartup")   
