@@ -45,7 +45,7 @@ else()
     set(SHADER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-add_executable(intro WIN32 "main.cpp" ${SHADERS})                   
+add_executable(intro WIN32 "main.cpp" "strings.asm" ${SHADERS})                   
 target_compile_definitions(intro PUBLIC XRES=${XRES} YRES=${YRES})
 target_link_libraries(intro opengl32.lib winmm.lib)
 target_include_directories(intro PUBLIC ${SHADER_INCLUDE_DIR}) # for the shaders
@@ -95,7 +95,9 @@ else()
     set_property(TARGET intro APPEND PROPERTY LINK_FLAGS " /ENTRY:mainCRTStartup")   
 endif()
 
-set_target_properties(intro PROPERTIES OUTPUT_NAME ${exename})
+add_custom_command(TARGET intro POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:intro> ${PROJECT_SOURCE_DIR}/dist/${exename}.exe
+)
 
 if (VALIDATE_SHADERS)
     find_program(GLSLANGVALIDATOR NAMES glslangValidator)

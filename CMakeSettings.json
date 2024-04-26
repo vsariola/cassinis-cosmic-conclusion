@@ -47,6 +47,11 @@
           "name": "COMPRESS_LEVEL",
           "value": "OFF",
           "type": "STRING"
+        },
+        {
+          "name": "MINIFY_SHADERS",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },

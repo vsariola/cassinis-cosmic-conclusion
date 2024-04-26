@@ -54,10 +54,14 @@ extern "C"
     BYTE _d[8];
   };
 
-#pragma bss_seg(".mainbss")
-  SUsample waveBuffer[READ_PIXEL_CALLS * READ_PIXEL_COUNT / 2];
+#pragma bss_seg(".wavbuf")
+  unsigned char waveBuffer[READ_PIXEL_CALLS * READ_PIXEL_COUNT];
+#pragma bss_seg(".fragprog")
   GLint fragmentShaderProgram;
+#pragma bss_seg(".hwo")
   HWAVEOUT hwo;
+#pragma bss_seg(".winsize")
+  RECT windowSize;
 
 #pragma data_seg(".devmode")
   MINI_DEVMODE devmode = {
@@ -135,13 +139,8 @@ extern "C"
           0 // dwBytesRecorded
           ,
           0 // dwUser
-#ifdef WAVHDR_PREPARE_HACK
           ,
           WHDR_PREPARED // dwFlags
-#else
-          ,
-          0 // dwFlags
-#endif
           ,
           0 // dwLoops
           ,
@@ -155,14 +154,9 @@ extern "C"
       {
           TIME_SAMPLES, 0};
 
-#pragma data_seg(".glCreateShaderProgramv")
-  const char nm_glCreateShaderProgramv[] = "glCreateShaderProgramv";
-
-#pragma data_seg(".glUseProgram")
-  const char nm_glUseProgram[] = "glUseProgram";
-
-#pragma data_seg(".glUniform4i")
-  const char nm_glUniform4i[] = "glUniform4i";
+extern const char nm_glCreateShaderProgramv[];
+extern const char nm_glUseProgram[];
+extern const char nm_glUniform4i[];
 
 #pragma data_seg(".fragmentShaders")
 #include <shader.inl>
@@ -186,6 +180,7 @@ _declspec(naked) void entrypoint()
 #else
 int __cdecl main()
 {
+
 #endif
 
 #if _DEBUG
@@ -224,14 +219,11 @@ int __cdecl main()
   auto hdc = GetDC(hwnd);
   assert(hdc);
 
-  // Find a pixel format that is compatible with OpenGL
-  auto pixelFormat = ChoosePixelFormat(
-      hdc, &pixelFormatSpecification);
-  assert(pixelFormat);
+  GetWindowRect(hwnd, &windowSize);
 
   // Set the pixel format on the Device Context to prepare it for OpenGL
   auto setOk = SetPixelFormat(
-      hdc, pixelFormat, nullptr);
+      hdc, 8, nullptr);
   assert(setOk);
 
   // Create OpenGL Context
@@ -271,8 +263,9 @@ int __cdecl main()
   assert(waveWriteOk == MMSYSERR_NOERROR);
 
   auto done = false;
-  auto frame = 0;
+  auto readpixel_offset = (READ_PIXEL_CALLS - 1) * READ_PIXEL_COUNT;
   auto buffer = waveBuffer;
+  auto music_saved = false;
 
   // Loop until done
   while (!done)
@@ -290,8 +283,10 @@ int __cdecl main()
     }
 
     // If ESCAPE is pressed we are done
-    if (GetAsyncKeyState(VK_ESCAPE))
-      done = 1;
+    if (GetAsyncKeyState(VK_ESCAPE)) {        
+        done = 1;
+    }
+      
 
     // Windows message handling done, let's draw some gfx
 
@@ -304,7 +299,7 @@ int __cdecl main()
     if (currentSample >= SU_LENGTH_IN_SAMPLES)
       done = 1;
 
-    ((PFNGLUNIFORM4IPROC)wglGetProcAddress("glUniform4i"))(0, XRES, YRES, currentSample, frame);
+    ((PFNGLUNIFORM4IPROC)wglGetProcAddress("glUniform4i"))(0, windowSize.right, windowSize.bottom, currentSample, readpixel_offset);
 
     // Use the previously compiled shader program
     ((PFNGLUSEPROGRAMPROC)wglGetProcAddress(nm_glUseProgram))(fragmentShaderProgram);
@@ -312,20 +307,20 @@ int __cdecl main()
     // Draws a rect over the entire window with fragment shader providing the gfx
     glRects(-1, -1, 1, 1);
 
-    if (frame < READ_PIXEL_CALLS)
+    if (readpixel_offset >= 0)
     {
-      glReadPixels(0, 0, READ_PIXEL_WIDTH, READ_PIXEL_HEIGHT, GL_RED, GL_UNSIGNED_BYTE, buffer);
-      buffer += READ_PIXEL_COUNT / 2;
+      glReadPixels(0, 0, READ_PIXEL_WIDTH, READ_PIXEL_HEIGHT, GL_RED, GL_UNSIGNED_BYTE, waveBuffer+ readpixel_offset);
 #if SAVE_MUSIC
     }
-    else if (frame == READ_PIXEL_CALLS)
+    else if (!music_saved)
     {
       FILE *f = fopen("buffer", "wb");
       fwrite(waveBuffer, sizeof(SUsample), SU_BUFFER_LENGTH, f);
       fclose(f);
+      music_saved = true;
 #endif
     }
-    frame++;
+    readpixel_offset -= READ_PIXEL_COUNT;
 
     // Swap the buffers to present the gfx
     auto swapOk = SwapBuffers(hdc);
@@ -345,25 +340,18 @@ int __cdecl main()
   _asm {
 
     xor esi, esi
-    xor ebx, ebx // ebx = frame
+    mov ebx, READ_PIXEL_CALLS * READ_PIXEL_COUNT
 
     push esi // ExitProcess.uExitCode
 
-    push 0x20 // waveOutWrite.cbwh
-    push offset waveHeader // waveOutWrite.pwh
-
-#ifndef WAVHDR_PREPARE_HACK
-    push 0x20 // waveOutPrepareHeader.cbwh
-    push offset waveHeader        // waveOutPrepareHeader.pwh
-#endif
-
+    
     push esi // waveOutOpen.fdwOpen
     push esi // waveOutOpen.dwInstance
     push esi // waveOutOpen.dwCallback
     push offset waveFormatSpecification // waveOutOpen.pwfx
     push - 1 // waveOutOpen.uDeviceID
     push offset hwo // waveOutOpen.phwo
-
+    
     push offset shader_frag // glCreateShaderProgram.strings
     push 1 // glCreateShaderProgram.count
     push GL_FRAGMENT_SHADER // glCreateShaderProgram.type
@@ -384,33 +372,20 @@ int __cdecl main()
     push ATOM_STATIC // CreateWindowExA.lpClassName
     push esi // CreateWindowExA.dwExStyle
 
-#ifdef FULLSCREEN
-    push CDS_FULLSCREEN // ChangeDisplaySettingsA.dwFlags
-    push offset devmode // ChangeDisplaySettingsA.lpDevMode
-
-
-    call ChangeDisplaySettingsA
-#endif
     call CreateWindowExA
 
     push eax // GetDC.hWnd
-
+    push offset windowSize // GetWindowRect.rect
+    push eax // GetWindowRect.hWnd    
+    call GetWindowRect
+   
     call GetDC
 
-    mov edi, eax
+    xchg edi, eax    
 
     push edi // wglCreateContext.hdc
     push esi                                         // SetPixelFormat.ppfd
-#ifdef PFD_HACK
     push 8                                       // SetPixelFormat.format
-#else
-    push offset pixelFormatSpecification // ChoosePixelFormat.ppfd
-    push edi // ChoosePixelFormat.hdc
-
-    call ChoosePixelFormat
-
-    push eax // SetPixelFormat.format
-#endif
     push edi // SetPixelFormat.hdc
 
     call SetPixelFormat
@@ -431,26 +406,22 @@ int __cdecl main()
 
     call waveOutOpen
 
-#ifndef WAVHDR_PREPARE_HACK
-    push [hwo]                   // waveOutPrepareHeader.hwo
-
-    call waveOutPrepareHeader
-#endif
-    push [hwo] // waveOutWrite.hwo
-
-    call waveOutWrite
-
     mainloop:
       push VK_ESCAPE // GetAsyncKeyState.vKey
 
-      push esi // PeekMessage.wRemoveMsg
-      push esi // PeekMessage.wMsgFilterMax
-      push esi // PeekMessage.wMsgFilterMin
-      push esi // PeekMessage.hWnd
-      push esi // PeekMessage.lpMsg
+      //push esi // PeekMessage.wRemoveMsg
+      //push esi // PeekMessage.wMsgFilterMax
+      //push esi // PeekMessage.wMsgFilterMin
+      //push esi // PeekMessage.hWnd
+      //push esi // PeekMessage.lpMsg
 
-      push edi // SwapBuffers.hdc
+      //push edi // SwapBuffers.hdc
+      
+        push 0x20 // waveOutWrite.cbwh
+        push offset waveHeader // waveOutWrite.pwh
+        push[hwo] // waveOutWrite.hwo
 
+readloop:
       push 1 // glRects.y2
       push 1 // glRects.x2
       push -1 // glRects.y1
@@ -465,9 +436,9 @@ int __cdecl main()
       mov  ebp, dword ptr[waveTime.u.sample]
 
       push            ebx // frame
-      push            ebp // time
-      push            YRES 
-      push            XRES
+      push            ebp // time      
+      push            dword ptr[windowSize.bottom]      
+      push            dword ptr[windowSize.right]
       push            esi // glUniform4i.location
 
       push            offset nm_glUniform4i // wglGetProcAddress.procName
@@ -482,31 +453,34 @@ int __cdecl main()
 
       call            wglGetProcAddress
 
-      call            eax // glUniform1i (indirect call)
+      call            eax // glUniform4i (indirect call)
 
       call            glRects
 
-      cmp             bl, READ_PIXEL_CALLS
-      jl              noread
-
-      push offset     waveBuffer // glReadPixels.data
+      sub             ebx, READ_PIXEL_COUNT
+      js              noread
+      
+      lea             eax, [waveBuffer+ebx]
+      push            eax // glReadPixels.data
       push            GL_UNSIGNED_BYTE // glReadPixels.type
       push            GL_RED // glReadPixels.format
       push            READ_PIXEL_HEIGHT // glReadPixels.height
       push            READ_PIXEL_WIDTH // glReadPixels.width
       push            esi // glReadPixels.y
       push            esi // glReadPixels.x
+      call            glReadPixels    
+      jmp             readloop
+    noread:         
+   
+      call waveOutWrite // start music only after all reads are done
 
-      call glReadPixels
-      inc ebx
-    noread:      
-      call SwapBuffers
-      call PeekMessageA
+      //call SwapBuffers
+      //call PeekMessageA
       call GetAsyncKeyState
-      test ax, ax
-      jne exit
+      sahf
+      js exit
       cmp ebp, SU_LENGTH_IN_SAMPLES
-      jl mainloop
+      js mainloop
 
   exit:
 
