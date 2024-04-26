@@ -54,6 +54,15 @@ extern "C"
     BYTE _d[8];
   };
 
+  struct MINI_WAVEHDR {
+      LPSTR              lpData;
+      DWORD              dwBufferLength;
+      DWORD              dwBytesRecorded;
+      DWORD_PTR          dwUser;
+      DWORD              dwFlags;
+      DWORD              dwLoops;
+  };
+
 #pragma bss_seg(".wavbuf")
   unsigned char waveBuffer[READ_PIXEL_CALLS * READ_PIXEL_COUNT];
 #pragma bss_seg(".fragprog")
@@ -109,15 +118,13 @@ extern "C"
   };
 
 #pragma data_seg(".waveHeader")
-  WAVEHDR waveHeader = {
+  MINI_WAVEHDR waveHeader = {
       (LPSTR)waveBuffer,                   // lpData
       SU_BUFFER_LENGTH * sizeof(SUsample), // dwBufferLength
       0,                                   // dwBytesRecorded
       0,                                   // dwUser
       WHDR_PREPARED,                       // dwFlags
-      0,                                   // dwLoops
-      0,                                   // lpNext
-      0                                    // reserved
+      0                                    // dwLoops
   };
 
 #pragma data_seg(".waveTime")
