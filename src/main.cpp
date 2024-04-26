@@ -167,7 +167,7 @@ int __cdecl main()
       nullptr,                               // hWndParent
       nullptr,                               // hMenu
       nullptr,                               // hInstance
-      nullptr,                               // lpParam
+      nullptr                                // lpParam
   );
   assert(hwnd);
 
