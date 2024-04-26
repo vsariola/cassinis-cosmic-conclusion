@@ -55,7 +55,7 @@ void main() {
   }
   col = (ivec3(col)>>coord.x%2*8)%256/255.;
   if (u.a<0) {
-    i   = u.z/32e5;
+    i   = u.z/36e5;
     j   = mod(i,2);
     t   = i-j;
 
