@@ -79,91 +79,59 @@ extern "C"
       0,                                                          // cGreenBits
       0,                                                          // cGreenShift
       0,                                                          // cBlueBits
-      0,                                                          // cBlueShift      
-      8 // cAlphaBits
-      ,
-      0 // cAlphaShift
-      ,
-      0 // cAccumBits
-      ,
-      0 // cAccumRedBits
-      ,
-      0 // cAccumGreenBits
-      ,
-      0 // cAccumBlueBits
-      ,
-      0 // cAccumAlphaBits
-      ,
-      32 // cDepthBits
-      ,
-      0 // cStencilBits
-      ,
-      0 // cAuxBuffers
-      ,
-      PFD_MAIN_PLANE // iLayerType
-      ,
-      0 // bReserved
-      ,
-      0 // dwLayerMask
-      ,
-      0 // dwVisibleMask
-      ,
-      0 // dwDamageMask
+      0,                                                          // cBlueShift
+      8,                                                          // cAlphaBits
+      0,                                                          // cAlphaShift
+      0,                                                          // cAccumBits
+      0,                                                          // cAccumRedBits
+      0,                                                          // cAccumGreenBits
+      0,                                                          // cAccumBlueBits
+      0,                                                          // cAccumAlphaBits
+      32,                                                         // cDepthBits
+      0,                                                          // cStencilBits
+      0,                                                          // cAuxBuffers
+      PFD_MAIN_PLANE,                                             // iLayerType
+      0,                                                          // bReserved
+      0,                                                          // dwLayerMask
+      0,                                                          // dwVisibleMask
+      0,                                                          // dwDamageMask
   };
 
 #pragma data_seg(".waveFormatSpecification")
-  WAVEFORMATEX waveFormatSpecification =
-      {
-          WAVE_FORMAT_PCM // wFormatTag
-          ,
-          SU_CHANNEL_COUNT // nChannels
-          ,
-          SU_SAMPLE_RATE // nSamplesPerSec
-          ,
-          SU_SAMPLE_RATE * sizeof(SUsample) * SU_CHANNEL_COUNT // nAvgBytesPerSec
-          ,
-          sizeof(SUsample) * SU_CHANNEL_COUNT // nBlockAlign
-          ,
-          sizeof(SUsample) * 8 // wBitsPerSample
-          ,
-          0 // cbSize
+  WAVEFORMATEX waveFormatSpecification = {
+      WAVE_FORMAT_PCM,                                      // wFormatTag
+      SU_CHANNEL_COUNT,                                     // nChannels
+      SU_SAMPLE_RATE,                                       // nSamplesPerSec
+      SU_SAMPLE_RATE * sizeof(SUsample) * SU_CHANNEL_COUNT, // nAvgBytesPerSec
+      sizeof(SUsample) * SU_CHANNEL_COUNT,                  // nBlockAlign
+      sizeof(SUsample) * 8,                                 // wBitsPerSample
+      0                                                     // cbSize
   };
 
 #pragma data_seg(".waveHeader")
-  WAVEHDR waveHeader =
-      {
-          (LPSTR)waveBuffer // lpData
-          ,
-          SU_BUFFER_LENGTH * sizeof(SUsample) // dwBufferLength
-          ,
-          0 // dwBytesRecorded
-          ,
-          0 // dwUser
-          ,
-          WHDR_PREPARED // dwFlags
-          ,
-          0 // dwLoops
-          ,
-          0 // lpNext
-          ,
-          0 // reserved
+  WAVEHDR waveHeader = {
+      (LPSTR)waveBuffer,                   // lpData
+      SU_BUFFER_LENGTH * sizeof(SUsample), // dwBufferLength
+      0,                                   // dwBytesRecorded
+      0,                                   // dwUser
+      WHDR_PREPARED,                       // dwFlags
+      0,                                   // dwLoops
+      0,                                   // lpNext
+      0                                    // reserved
   };
 
 #pragma data_seg(".waveTime")
-  MMTIME waveTime =
-      {
-          TIME_SAMPLES, 0};
+  MMTIME waveTime = {TIME_SAMPLES, 0};
 
-extern const char nm_glCreateShaderProgramv[];
-extern const char nm_glUseProgram[];
-extern const char nm_glUniform4i[];
+  extern const char nm_glCreateShaderProgramv[];
+  extern const char nm_glUseProgram[];
+  extern const char nm_glUniform4i[];
 
 #pragma data_seg(".fragmentShaders")
 #include <shader.inl>
 
 #ifdef _DEBUG
-  void APIENTRY debugCallback(
-      GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const *message, void const *userParam)
+  void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const *message, void const *userParam)
   {
     printf(message);
     printf("\n");
@@ -188,30 +156,18 @@ int __cdecl main()
 
   // Create the window using the STATIC class
   auto hwnd = CreateWindowExA(
-      0 // dwExStyle
-      // Special name for STATIC window class
-      ,
-      reinterpret_cast<LPCSTR>(ATOM_STATIC) // lpClassName
-      ,
-      nullptr // lpWindowName
-      ,
-      dwStyle // dwStyle
-      ,
-      0 // nX
-      ,
-      0 // nY
-      ,
-      XRES // nWidth
-      ,
-      YRES // nHeight
-      ,
-      nullptr // hWndParent
-      ,
-      nullptr // hMenu
-      ,
-      nullptr // hInstance
-      ,
-      nullptr // lpParam
+      0,                                     // dwExStyle Special name for STATIC window class
+      reinterpret_cast<LPCSTR>(ATOM_STATIC), // lpClassName
+      nullptr,                               // lpWindowName
+      dwStyle,                               // dwStyle
+      0,                                     // nX
+      0,                                     // nY
+      XRES,                                  // nWidth
+      YRES,                                  // nHeight
+      nullptr,                               // hWndParent
+      nullptr,                               // hMenu
+      nullptr,                               // hInstance
+      nullptr,                               // lpParam
   );
   assert(hwnd);
 
@@ -254,12 +210,10 @@ int __cdecl main()
       &hwo, WAVE_MAPPER, &waveFormatSpecification, NULL, 0, CALLBACK_NULL);
   assert(waveOpenOk == MMSYSERR_NOERROR);
 
-  auto wavePrepareOk = waveOutPrepareHeader(
-      hwo, &waveHeader, sizeof(waveHeader));
+  auto wavePrepareOk = waveOutPrepareHeader(hwo, &waveHeader, sizeof(waveHeader));
   assert(wavePrepareOk == MMSYSERR_NOERROR);
 
-  auto waveWriteOk = waveOutWrite(
-      hwo, &waveHeader, sizeof(waveHeader));
+  auto waveWriteOk = waveOutWrite(hwo, &waveHeader, sizeof(waveHeader));
   assert(waveWriteOk == MMSYSERR_NOERROR);
 
   auto done = false;
@@ -283,10 +237,8 @@ int __cdecl main()
     }
 
     // If ESCAPE is pressed we are done
-    if (GetAsyncKeyState(VK_ESCAPE)) {        
-        done = 1;
-    }
-      
+    if (GetAsyncKeyState(VK_ESCAPE))
+      done = 1;
 
     // Windows message handling done, let's draw some gfx
 
@@ -309,7 +261,7 @@ int __cdecl main()
 
     if (readpixel_offset >= 0)
     {
-      glReadPixels(0, 0, READ_PIXEL_WIDTH, READ_PIXEL_HEIGHT, GL_RED, GL_UNSIGNED_BYTE, waveBuffer+ readpixel_offset);
+      glReadPixels(0, 0, READ_PIXEL_WIDTH, READ_PIXEL_HEIGHT, GL_RED, GL_UNSIGNED_BYTE, waveBuffer + readpixel_offset);
 #if SAVE_MUSIC
     }
     else if (!music_saved)
@@ -344,14 +296,14 @@ int __cdecl main()
 
     push esi // ExitProcess.uExitCode
 
-    
+
     push esi // waveOutOpen.fdwOpen
     push esi // waveOutOpen.dwInstance
     push esi // waveOutOpen.dwCallback
     push offset waveFormatSpecification // waveOutOpen.pwfx
     push - 1 // waveOutOpen.uDeviceID
     push offset hwo // waveOutOpen.phwo
-    
+
     push offset shader_frag // glCreateShaderProgram.strings
     push 1 // glCreateShaderProgram.count
     push GL_FRAGMENT_SHADER // glCreateShaderProgram.type
@@ -376,16 +328,16 @@ int __cdecl main()
 
     push eax // GetDC.hWnd
     push offset windowSize // GetWindowRect.rect
-    push eax // GetWindowRect.hWnd    
+    push eax // GetWindowRect.hWnd
     call GetWindowRect
-   
+
     call GetDC
 
-    xchg edi, eax    
+    xchg edi, eax
 
     push edi // wglCreateContext.hdc
-    push esi                                         // SetPixelFormat.ppfd
-    push 8                                       // SetPixelFormat.format
+    push esi // SetPixelFormat.ppfd
+    push 8 // SetPixelFormat.format
     push edi // SetPixelFormat.hdc
 
     call SetPixelFormat
@@ -409,14 +361,14 @@ int __cdecl main()
     mainloop:
       push VK_ESCAPE // GetAsyncKeyState.vKey
 
-      //push esi // PeekMessage.wRemoveMsg
-      //push esi // PeekMessage.wMsgFilterMax
-      //push esi // PeekMessage.wMsgFilterMin
-      //push esi // PeekMessage.hWnd
-      //push esi // PeekMessage.lpMsg
+                // push esi // PeekMessage.wRemoveMsg
+                // push esi // PeekMessage.wMsgFilterMax
+                // push esi // PeekMessage.wMsgFilterMin
+                // push esi // PeekMessage.hWnd
+                // push esi // PeekMessage.lpMsg
 
-      //push edi // SwapBuffers.hdc
-      
+                // push edi // SwapBuffers.hdc
+
         push 0x20 // waveOutWrite.cbwh
         push offset waveHeader // waveOutWrite.pwh
         push[hwo] // waveOutWrite.hwo
@@ -436,8 +388,8 @@ readloop:
       mov  ebp, dword ptr[waveTime.u.sample]
 
       push            ebx // frame
-      push            ebp // time      
-      push            dword ptr[windowSize.bottom]      
+      push            ebp // time
+      push            dword ptr[windowSize.bottom]
       push            dword ptr[windowSize.right]
       push            esi // glUniform4i.location
 
@@ -459,7 +411,7 @@ readloop:
 
       sub             ebx, READ_PIXEL_COUNT
       js              noread
-      
+
       lea             eax, [waveBuffer+ebx]
       push            eax // glReadPixels.data
       push            GL_UNSIGNED_BYTE // glReadPixels.type
@@ -468,14 +420,14 @@ readloop:
       push            READ_PIXEL_WIDTH // glReadPixels.width
       push            esi // glReadPixels.y
       push            esi // glReadPixels.x
-      call            glReadPixels    
+      call            glReadPixels
       jmp             readloop
-    noread:         
-   
+    noread:
+
       call waveOutWrite // start music only after all reads are done
 
-      //call SwapBuffers
-      //call PeekMessageA
+            // call SwapBuffers
+            // call PeekMessageA
       call GetAsyncKeyState
       sahf
       js exit
