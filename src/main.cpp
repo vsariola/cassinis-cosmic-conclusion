@@ -431,7 +431,7 @@ readloop:
       call GetAsyncKeyState
       sahf
       js exit
-      cmp ebp, SU_LENGTH_IN_SAMPLES
+      cmp ebp, SU_LENGTH_IN_SAMPLES*4
       js mainloop
 
   exit:
