@@ -50,8 +50,6 @@ target_compile_definitions(intro PUBLIC XRES=${XRES} YRES=${YRES})
 target_link_libraries(intro opengl32.lib winmm.lib)
 target_include_directories(intro PUBLIC ${SHADER_INCLUDE_DIR}) # for the shaders
 
-set_target_properties(intro PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/dist)
-
 set(exename "intro")
 if (NOT YRES EQUAL "1080")
     set(exename "${exename}-${YRES}")
