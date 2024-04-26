@@ -121,7 +121,7 @@ extern "C"
   };
 
 #pragma data_seg(".waveTime")
-  MMTIME waveTime = {TIME_SAMPLES, 0};
+  MMTIME waveTime = {TIME_BYTES, 0};
 
   extern const char nm_glCreateShaderProgramv[];
   extern const char nm_glUseProgram[];
@@ -380,12 +380,12 @@ readloop:
       push -1 // glRects.x1
 
       push 0xC // waveOutGetPosition.cbmmt
-      push offset waveTime // waveOutGetPosition.pmmt
+      push offset waveHeader+16 // waveOutGetPosition.pmmt
       push [hwo] // waveOutGetPosition.hwo
 
       call waveOutGetPosition
 
-      mov  ebp, dword ptr[waveTime.u.sample]
+      mov  ebp, dword ptr[waveHeader + 20]
 
       push            ebx // frame
       push            ebp // time

@@ -54,7 +54,7 @@ void main() {
   col = (ivec3(col)>>coord.x%2*8)%256/255.;  
   if (u.a<0) {
         float 
-        tp   = u.z/8e5
+        tp   = u.z/32e5
       , tm   = mod(tp,2)
       , tn   = tp-tm      
       ;
