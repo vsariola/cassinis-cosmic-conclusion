@@ -184,9 +184,6 @@ int __cdecl main() {
   auto waveOpenOk = waveOutOpen(&hwo, WAVE_MAPPER, &waveFormatSpecification, NULL, 0, CALLBACK_NULL);
   assert(waveOpenOk == MMSYSERR_NOERROR);
 
-  auto wavePrepareOk = waveOutPrepareHeader(hwo, reinterpret_cast<LPWAVEHDR>(&waveHeader), sizeof(waveHeader));
-  assert(wavePrepareOk == MMSYSERR_NOERROR);
-
   auto done = false;
   auto readpixel_offset = READ_PIXEL_CALLS * READ_PIXEL_COUNT;
   auto music_saved = false;
