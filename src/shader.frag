@@ -31,97 +31,87 @@ vec2 rayPlanet(vec3 ro, vec3 rd) {
 }
 
 vec3 skyCol(vec3 sunDir, vec3 rd) {
-  float gf = 1.0001-dot(sunDir, rd);
-  return vec3(5, 2, 1)/5E4/gf/gf;
+  float gf = 1-.999*dot(sunDir, rd);
+  return vec3(5, 2, 1)/1E5/gf/gf;
 }
 
 void main() {
+  float i1,j1,t1,r1,v1,a1,s1,m1;
+  vec2 a2, b2,c2,d2;
+  vec3 a3, b3,c3,d3,e3,f3,g3;
   ivec3 coord = ivec3(gl_FragCoord);
 
-  float i,j,t,r,v,a,s,m;
 
-  for(i=1;i<4;i++)
-  for(j=1;j<5;j++) {
-    t = (coord.x+coord.y*512+u.a)/4/48000.;
-    r = t*j/32+i/3;
-    v = mod(r,1);
-    a = 3;
-    s = t+(coord.x&2)*t/50;
-    m = 4*sin(exp2(mod(r-v,3)/6+8.5)*t*j*i);
-    for (;a<50;s += a *= 1.02)
-        m += sin(s*a)/a;
-    col += sin(sin(r<9?t/j/47:0)*m)*exp2(21-v*13-1/v-i/3-j/3);
+  for(i1=1;i1<4;i1++)
+  for(j1=1;j1<5;j1++) {
+    t1 = (coord.x+coord.y*512+u.a)/4/48000.;
+    r1 = t1*j1/32+i1/3;
+    v1 = mod(r1,1);
+    s1 = t1+(coord.x&2)*t1/50;
+    m1 = 4*sin(exp2(mod(r1-v1,3)/6+8.5)*t1*j1*i1);
+    for (a1=3;a1<50;s1 += a1 *= 1.02)
+        m1 += sin(s1*a1)/a1;
+    col += sin(sin(r1<9?t1/j1/47:0)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
 
   }
   col = (ivec3(col)>>coord.x%2*8)%256/255.;
   if (u.a<0) {
-    i   = u.z/36e5;
-    j   = mod(i,2);
-    t   = i-j;
+    i1 = u.z/36e5;
+    j1   = mod(i1,2);
+    t1   = i1-j1;
 
-      vec3
-        sunDir
-      , rd    = vec3(2*coord.xy-u.xy, 4*u.y)
-      , ro = t == 0 ? ((sunDir  = vec3(0, -1, 33)),(rd.zy+=rd.yz*vec2(1,-1)*(-.05+.08*j)),vec3(0, 90+15*j, -180)) :
-           t == 2 ? ((sunDir  = vec3(3, 2, -3)),(rd.xy+=rd.yx*vec2(.3,-.3)),vec3(0, 25, -250)*(1+j*j)) :
-           t == 4 ? ((sunDir  = vec3(0, 1, 3)),vec3(180, 50+j*50, -600)) :
-                     ((sunDir  = vec3(-3, 2, 6)),vec3(0, 0, -600)*(1+j*j));
+    c3  = vec3(2*coord.xy-u.xy, 4*u.y);
+    d3  = t1 == 0 ? ((a3  = vec3(0, -1, 33)),(c3.zy+=c3.yz*vec2(1,-1)*(-.05+.08*j1)),vec3(0, 90+15*j1, -180)) :
+           t1 == 2 ? ((a3  = vec3(3, 2, -3)),(c3.xy+=c3.yx*vec2(.3,-.3)),vec3(0, 25, -250)*(1+j1*j1)) :
+           t1 == 4 ? ((a3  = vec3(0, 1, 3)),vec3(180, 50+j1*50, -600)) :
+                     ((a3  = vec3(-3, 2, 6)),vec3(0, 0, -600)*(1+j1*j1));
 
-      rd      = normalize(rd);
-      sunDir  = normalize(sunDir);
+      c3  = normalize(c3);
+      a3  = normalize(a3);
 
-      r = -ro.y/rd.y;
+      r1 = -d3.y/c3.y;
 
-      col = skyCol(sunDir, rd);
+      col = skyCol(a3, c3);
 
-      vec3 rp  = ro+rd*r;
+      b3  = d3+c3*r1;
 
-      vec2
-        si = rayPlanet(ro, rd)
-      , pi = rayPlanet(rp, sunDir)
-      ;
+      a2 = rayPlanet(d3, c3);
+      b2 = rayPlanet(b3, a3);
 
-      vec3
-        p = ro+si.x*rd
-      , n = normalize(p)
-      , pcol
-      , rcol
-      ;
+      d3 = d3+a2.x*c3;
 
-  t = -p.y/sunDir.y;
-  a = length(rp.xz);
-  s = length((p+t*sunDir).xz);
+      e3 = normalize(d3);
 
-      vec2
-        a2 = vec2(.25)
-      , h2 = vec2(p.y*5E-2,a*.15+1)
-      ;
+      t1 = -d3.y/a3.y;
+      a1 = length(b3.xz);
+      s1 = length((d3+t1*a3).xz);
 
-      for (i = 1; i < 8; i++) {
-        pcol += a2.x*(sin(h2.x+vec3(0, 1, 2)/4)+1);
-        rcol += a2.y*(sin(h2.y+vec3(2, 1, 0)/8));
-        a2 *= .5;
-        a2.y *= smoothstep(1., .6, (1+rd.y)*sqrt(abs(dot(normalize(rp.xz), normalize(rd.xz))))*tanh(r*4E-3));
-        h2 = 1.99*h2+1;
+      c2 += .25;
+      d2 = vec2(d3.y*5E-2,a1*.15+1);
+
+      for (i1 = 1; i1 < 8; i1++) {
+        f3 += c2.x*(sin(d2.x+vec3(0, 1, 2)/4)+1);
+        g3 += c2.y*(sin(d2.y+vec3(2, 1, 0)/8));
+        c2 *= .5;
+        c2.y *= smoothstep(1., .6, (1+c3.y)*sqrt(abs(dot(normalize(b3.xz), normalize(c3.xz))))*tanh(r1*4E-3));
+        d2 = 1.99*d2+1;
       }
-      rcol = abs(rcol);
+      g3 = abs(g3);
 
-      m = 1-smoothstep(40, 19, abs(s-200))*(.5+.4*sin(.3*s)*cos(.05*s))*tanh(100*sunDir.y*sunDir.y);
-      s = tanh(5E-3*si.y);
-      if (si.x > 0) {
-        col *= 1-s;
-        v = 1+dot(rd, n);
-        v *= v*v;
-        col += sqrt(skyCol(sunDir, reflect(rd, n)))*v+max(dot(sunDir, n), 0)*s*(pcol+vec3(.4, .9, 2)*v*v);
-        if (t > 0)
-          col *= m;
+      m1 = 1-smoothstep(40, 19, abs(s1-200))*(.5+.4*sin(.3*s1)*cos(.05*s1))*tanh(100*a3.y*a3.y);
+      s1 = tanh(5E-3*a2.y);
+      if (a2.x > 0) {
+        col *= 1-s1;
+        col += sqrt(skyCol(a3, reflect(c3, e3)))*pow(1+dot(c3, e3),8.)+max(dot(a3, e3), 0)*s1*(f3);
+        if (t1 > 0)
+          col *= m1;
       }
 
       col = sqrt(tanh(
         mix(col,
-            rcol*(pi.x > 0 ? smoothstep(2E3, 0., pi.y)+3E-2  : 1),
-            smoothstep(40, 19, abs(a-200))*(si.x < r?1-s:1)*dot(rcol, vec3(1))
-        )*j*(2-j)
+            g3*(b2.x > 0 ? smoothstep(2E3, 0., b2.y)+3E-2  : 1),
+            smoothstep(40, 19, abs(a1-200))*(a2.x < r1?1-s1:1)*3.*g3.y
+        )*j1*(2-j1)
       ));
   }
 }
