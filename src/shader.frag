@@ -93,7 +93,7 @@ void main() {
         f3 += c2.x*(sin(d2.x+vec3(0, 1, 2)/4)+1);
         g3 += c2.y*(sin(d2.y+vec3(2, 1, 0)/8));
         c2 *= .5;
-        c2.y *= smoothstep(1., .6, (1+c3.y)*sqrt(abs(dot(normalize(b3.xz), normalize(c3.xz))))*tanh(r1*4E-3));
+        c2.y *= smoothstep(1., .6, (1+c3.y)*sqrt(abs(dot(normalize(b3), c3)))*tanh(r1*4E-3));
         d2 = 1.99*d2+1;
       }
       g3 = abs(g3);
