@@ -73,36 +73,6 @@ extern "C"
 #pragma bss_seg(".winsize")
   RECT windowSize;
 
-#pragma data_seg(".pixelFormatDescriptor")
-  PIXELFORMATDESCRIPTOR pixelFormatSpecification{
-      sizeof(PIXELFORMATDESCRIPTOR),                              // nSize
-      1,                                                          // nVersion
-      PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // dwFlags
-      PFD_TYPE_RGBA,                                              // iPixelType
-      32,                                                         // cColorBits
-      0,                                                          // cRedBits
-      0,                                                          // cRedShift
-      0,                                                          // cGreenBits
-      0,                                                          // cGreenShift
-      0,                                                          // cBlueBits
-      0,                                                          // cBlueShift
-      8,                                                          // cAlphaBits
-      0,                                                          // cAlphaShift
-      0,                                                          // cAccumBits
-      0,                                                          // cAccumRedBits
-      0,                                                          // cAccumGreenBits
-      0,                                                          // cAccumBlueBits
-      0,                                                          // cAccumAlphaBits
-      32,                                                         // cDepthBits
-      0,                                                          // cStencilBits
-      0,                                                          // cAuxBuffers
-      PFD_MAIN_PLANE,                                             // iLayerType
-      0,                                                          // bReserved
-      0,                                                          // dwLayerMask
-      0,                                                          // dwVisibleMask
-      0,                                                          // dwDamageMask
-  };
-
 #pragma data_seg(".waveFormatSpecification")
   WAVEFORMATEX waveFormatSpecification = {
       WAVE_FORMAT_PCM,                                      // wFormatTag
