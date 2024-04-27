@@ -319,7 +319,7 @@ int __cdecl main() {
     call wglGetProcAddress
 
     call eax // glCreateShaderProgram (indirect call)
-    mov fragmentShaderProgram, eax
+    xchg edi, eax
 
     call waveOutOpen
 
@@ -352,7 +352,7 @@ readloop:
 
     push            offset nm_glUniform4i // wglGetProcAddress.procName
 
-    push            [fragmentShaderProgram] // glUseProgram.pid
+    push            edi // glUseProgram.pid
 
     push            offset nm_glUseProgram // wglGetProcAddress.procName
 
