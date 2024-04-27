@@ -110,7 +110,7 @@ void main() {
       col = sqrt(tanh(
         mix(col,
             g3*(b2.x > 0 ? smoothstep(2E3, 0., b2.y)+3E-2  : 1),
-            smoothstep(40, 19, abs(a1-200))*(a2.x < r1?1-s1:1)*3.*g3.y
+            smoothstep(40, 19, abs(a1-200))*(a2.x < r1?1-s1:1)*3*g3.y
         )*j1*(2-j1)
       ));
   }
