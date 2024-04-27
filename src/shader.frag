@@ -40,22 +40,7 @@ void main() {
   vec2 a2, b2,c2,d2;
   vec3 a3, b3,c3,d3,e3,f3,g3;
   ivec3 coord = ivec3(gl_FragCoord);
-
-
-  for(i1=1;i1<4;i1++)
-  for(j1=1;j1<5;j1++) {
-    t1 = (coord.x+coord.y*512+u.a)/4/48000.;
-    r1 = t1*j1/32+i1/3;
-    v1 = mod(r1,1);
-    s1 = t1+(coord.x&2)*t1/50;
-    m1 = 4*sin(exp2(mod(r1-v1,3)/6+8.5)*t1*j1*i1);
-    for (a1=3;a1<50;s1 += a1 *= 1.02)
-        m1 += sin(s1*a1)/a1;
-    col += sin(sin(r1<9?t1/j1/47:0)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
-
-  }
-  col = (ivec3(col)>>coord.x%2*8)%256/255.;
-  if (0>u.a) {
+  
     i1 = u.z/36e5;
     j1   = mod(i1,2);
     c3  = vec3(2*coord.xy-u.xy, 4*u.y);
@@ -123,5 +108,21 @@ void main() {
             smoothstep(.4, .2, abs(a1-2))*(a2.x < r1?1-s1:1)*3*g3.y
         )*j1*(2-j1)
       ));
+  
+
+  
+  for(i1=1;i1<4;i1++)
+  for(j1=1;j1<5;j1++) {
+    t1 = (coord.x+coord.y*512+u.a)/4/48000.;
+    r1 = t1*j1/32+i1/3;
+    v1 = mod(r1,1);
+    s1 = t1+(coord.x&2)*t1/50;
+    m1 = 4*sin(exp2(mod(r1-v1,3)/6+8.5)*t1*j1*i1);
+    for (a1=3;a1<50;s1 += a1 *= 1.02)
+        m1 += sin(s1*a1)/a1;
+    a3 += sin(sin(r1<9?t1/j1/47:0)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
+
   }
+  if (0<u.a)
+    col = (ivec3(a3)>>coord.x%2*8)%256/255.;
 }
