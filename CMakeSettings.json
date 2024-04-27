@@ -1,7 +1,7 @@
 ﻿{
   "configurations": [
     {
-      "name": "debug-1080",
+      "name": "debug",
       "generator": "Ninja",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
@@ -33,7 +33,44 @@
       ]
     },
     {
-      "name": "uncompressed-1080",
+      "name": "debug-fullscreen",
+      "generator": "Ninja",
+      "configurationType": "RelWithDebInfo",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "COMPRESS_LEVEL",
+          "value": "OFF",
+          "type": "STRING"
+        },
+        {
+          "name": "FULLSCREEN",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "_DEBUG",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "VALIDATE_SHADERS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "SAVE_MUSIC",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "name": "uncompressed",
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
@@ -56,7 +93,7 @@
       ]
     },
     {
-      "name": "light-1080",
+      "name": "light",
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
@@ -74,7 +111,7 @@
       ]
     },
     {
-      "name": "heavy-1080",
+      "name": "heavy",
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
