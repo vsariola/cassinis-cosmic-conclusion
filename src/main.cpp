@@ -217,10 +217,10 @@ int __cdecl main()
       &hwo, WAVE_MAPPER, &waveFormatSpecification, NULL, 0, CALLBACK_NULL);
   assert(waveOpenOk == MMSYSERR_NOERROR);
 
-  auto wavePrepareOk = waveOutPrepareHeader(hwo, &waveHeader, sizeof(waveHeader));
+  auto wavePrepareOk = waveOutPrepareHeader(hwo, reinterpret_cast<LPWAVEHDR>(&waveHeader), sizeof(waveHeader));
   assert(wavePrepareOk == MMSYSERR_NOERROR);
 
-  auto waveWriteOk = waveOutWrite(hwo, &waveHeader, sizeof(waveHeader));
+  auto waveWriteOk = waveOutWrite(hwo, reinterpret_cast<LPWAVEHDR>(&waveHeader), sizeof(waveHeader));
   assert(waveWriteOk == MMSYSERR_NOERROR);
 
   auto done = false;
