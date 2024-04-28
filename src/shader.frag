@@ -23,13 +23,6 @@
 out vec3 col;
 uniform ivec4 u;
 
-vec2 rayPlanet(vec3 ro, vec3 rd) {
-  float
-    b = dot(ro, rd)
-  , h = b*b - dot(ro, ro) + 1;
-  return vec2(-b-sqrt(h), h);
-}
-
 void main() {
   float i1,j1,t1,r1,v1,a1,s1,m1;
   vec2 a2, b2,c2,d2;
@@ -64,8 +57,11 @@ void main() {
 
       b3  = d3+c3*r1;
 
-      a2 = rayPlanet(d3, c3);
-      b2 = rayPlanet(b3, a3);
+      t1 = dot(b3, a3);a1=t1*t1-dot(b3, b3)+1;
+      b2 = vec2(-t1-sqrt(a1), a1);
+
+      t1 = dot(d3, c3);a1=t1*t1-dot(d3, d3)+1;
+      a2 = vec2(-t1-sqrt(a1), a1);
 
       d3 = d3+a2.x*c3;
 
@@ -76,8 +72,8 @@ void main() {
       c2 += .25;
       d2 = vec2(d3.y*5,a1*15)+1;
 
-      col = vec3(5, 2, 1)/pow(300.2-300*dot(a3, c3), 2);
-      e3  = vec3(5, 2, 1)/pow(300.2-300*dot(a3, reflect(c3, d3)), 2);
+      col = vec3(5, 2, 1)/1E5/pow(1-.999*dot(a3, c3), 2);
+      e3  = vec3(5, 2, 1)/1E5/pow(1-.999*dot(a3, reflect(c3, d3)), 2);
 
       for (i1 = 1; i1 < 8; i1++) {
         f3 += c2.x*(sin(d2.x+vec3(0, 1, 2)/4)+1);
@@ -90,8 +86,7 @@ void main() {
 
       m1 = 1-smoothstep(.4, .2, abs(s1-2))*(.5+.4*sin(33*s1)*cos(5*s1))*step(0,t1);
       s1 = tanh(55*a2.y);
-      if (0<a2.x) 
-        col = mix(col, sqrt(e3)*pow(1+dot(c3, d3),8.)+max(dot(a3, d3), 0)*s1*f3*m1, s1);
+      if (0<a2.x) col = mix(col, sqrt(e3)*pow(1+dot(c3, d3),8.)+max(dot(a3, d3), 0)*s1*f3*m1, s1);
 
       col = sqrt(tanh(
         mix(col,
@@ -104,15 +99,14 @@ void main() {
   
   for(i1=1;i1<4;i1++)
   for(j1=1;j1<5;j1++) {
-    t1 = (coord.x+coord.y*512+u.a)/4/48000.;
+    t1 = (coord.x+coord.y*512+u.a)/4/48E3;
     r1 = t1*j1/32+i1/3;
     v1 = mod(r1,1);
     s1 = t1+(coord.x&2)*t1/50;
     m1 = 4*sin(exp2(mod(r1-v1,3)/6+8.5)*t1*j1*i1);
     for (a1=3;a1<50;s1 += a1 *= 1.02)
         m1 += sin(s1*a1)/a1;
-    if(0<9-r1)
-        a3 += sin(sin(t1/j1/47)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
+    a3 += sin(sin(r1<9?t1/j1/47:0)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
 
   }
   if (0<u.a)
