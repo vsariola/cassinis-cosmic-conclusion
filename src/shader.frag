@@ -115,7 +115,8 @@ void main() {
     m1 = 4*sin(exp2(mod(r1-v1,3)/6+8.5)*t1*j1*i1);
     for (a1=3;a1<50;s1 += a1 *= 1.02)
         m1 += sin(s1*a1)/a1;
-    a3 += sin(sin(r1<9?t1/j1/47:0)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
+    if(0<9-r1)
+        a3 += sin(sin(t1/j1/47)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
 
   }
   if (0<u.a)
