@@ -30,11 +30,6 @@ vec2 rayPlanet(vec3 ro, vec3 rd) {
   return vec2(-b-sqrt(h), h);
 }
 
-vec3 skyCol(vec3 sunDir, vec3 rd) {
-  float gf = 1-.999*dot(sunDir, rd);
-  return vec3(5, 2, 1)/1E5/gf/gf;
-}
-
 void main() {
   float i1,j1,t1,r1,v1,a1,s1,m1;
   vec2 a2, b2,c2,d2;
@@ -81,8 +76,8 @@ void main() {
       c2 += .25;
       d2 = vec2(d3.y*5,a1*15)+1;
 
-      col = skyCol(a3, c3);
-      e3  = skyCol(a3, reflect(c3, d3));
+      col = vec3(5, 2, 1)/1E5/pow(1-.999*dot(a3, c3), 2);
+      e3  = vec3(5, 2, 1)/1E5/pow(1-.999*dot(a3, reflect(c3, d3)), 2);
 
       for (i1 = 1; i1 < 8; i1++) {
         f3 += c2.x*(sin(d2.x+vec3(0, 1, 2)/4)+1);
