@@ -102,7 +102,7 @@ void main() {
     t1 = (coord.x+coord.y*512+u.a)/4/48E3;
     r1 = t1*j1/32+i1/3;
     v1 = mod(r1,1);
-    s1 = t1+(coord.x&2)*t1/50;
+    s1 = t1+(coord.x&2);
     m1 = 4*sin(exp2(mod(r1-v1,3)/6+8.5)*t1*j1*i1);
     for (a1=3;a1<50;s1 += a1 *= 1.02)
         m1 += sin(s1*a1)/a1;
