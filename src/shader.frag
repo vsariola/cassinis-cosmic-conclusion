@@ -86,7 +86,7 @@ void main() {
 
       m1 = 1-smoothstep(.4, .2, abs(s1-2))*(.5+.4*sin(33*s1)*cos(5*s1))*step(0,t1);
       s1 = tanh(55*a2.y);
-      if (0<a2.x) col = mix(col, sqrt(e3)*pow(1+dot(c3, d3),8.)+max(dot(a3, d3), 0)*s1*f3*m1, s1);
+      if (0<a2.x) col = mix(col, sqrt(e3)*pow(1+dot(c3, d3),8)+max(dot(a3, d3), 0)*s1*f3*m1, s1);
 
       col = sqrt(tanh(
         mix(col,

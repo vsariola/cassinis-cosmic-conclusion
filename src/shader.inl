@@ -48,7 +48,7 @@ const char *shader_frag =
    "w=1-smoothstep(.4,.2,abs(a-2))*(.5+.4*sin(33*a)*cos(5*a))*step(0,d);"
    "a=tanh(55*n.y);"
    "if(0<n.x)"
-     "i=mix(i,sqrt(u)*pow(1+dot(t,g),8.)+max(dot(p,g),0)*a*c*w,a);"
+     "i=mix(i,sqrt(u)*pow(1+dot(t,g),8)+max(dot(p,g),0)*a*c*w,a);"
    "i=sqrt(tanh(mix(i,C*smoothstep(.2,0.,r.y*step(0,r.x)),smoothstep(.4,.2,abs(m-2))*(n.x<x?"
      "1-a:"
      "1)*3*C.y)*y*(2-y)));"
