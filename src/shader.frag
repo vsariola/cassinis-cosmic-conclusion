@@ -72,8 +72,8 @@ void main() {
       c2 += .25;
       d2 = vec2(d3.y*5,a1*15)+1;
 
-      col = vec3(5, 2, 1)/1E5/pow(1-.999*dot(a3, c3), 2);
-      e3  = vec3(5, 2, 1)/1E5/pow(1-.999*dot(a3, reflect(c3, d3)), 2);
+      col = vec3(5, 2, 1)/pow(300.2-300*dot(a3, c3), 2);
+      e3  = vec3(5, 2, 1)/pow(300.2-300*dot(a3, reflect(c3, d3)), 2);
 
       for (i1 = 1; i1 < 8; i1++) {
         f3 += c2.x*(sin(d2.x+vec3(0, 1, 2)/4)+1);
