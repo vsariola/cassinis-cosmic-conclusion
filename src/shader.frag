@@ -72,9 +72,6 @@ void main() {
       c2 += .25;
       d2 = vec2(d3.y*5,a1*15)+1;
 
-      col = vec3(5, 2, 1)/pow(300.2-300*dot(a3, c3), 2);
-      e3  = vec3(5, 2, 1)/pow(300.2-300*dot(a3, reflect(c3, d3)), 2);
-
       for (i1 = 1; i1 < 8; i1++) {
         f3 += c2.x*(sin(d2.x+vec3(0, 1, 2)/4)+1);
         g3 += c2.y*(sin(d2.y+vec3(2, 1, 0)/8));
@@ -86,6 +83,10 @@ void main() {
 
       m1 = 1-smoothstep(.4, .2, abs(s1-2))*(.5+.4*sin(33*s1)*cos(5*s1))*step(0,t1);
       s1 = tanh(55*a2.y);
+
+      col = vec3(5, 2, 1)/pow(300.2-300*dot(a3, c3), 2);
+      e3  = vec3(5, 2, 1)/pow(300.2-300*dot(a3, reflect(c3, d3)), 2);
+
       if (0<a2.x) col = mix(col, sqrt(e3)*pow(1+dot(c3, d3),8)+max(dot(a3, d3), 0)*s1*f3*m1, s1);
 
       col = sqrt(tanh(
