@@ -266,7 +266,7 @@ int __cdecl main() {
     push esi // waveOutOpen.dwCallback
     push offset waveFormatSpecification // waveOutOpen.pwfx
     push - 1 // waveOutOpen.uDeviceID
-    push offset hwo // waveOutOpen.phwo
+    push offset shader_frag // waveOutOpen.phwo
 
     push offset shader_frag // glCreateShaderProgram.strings
     push 1 // glCreateShaderProgram.count
@@ -369,11 +369,11 @@ trampoline:
 
     push 0x20 // waveOutWrite.cbwh
     push offset waveHeader // waveOutWrite.pwh
-    push[hwo] // waveOutWrite.hwo
+    push[shader_frag] // waveOutWrite.hwo
 
     push 0xC // waveOutGetPosition.cbmmt
     push offset waveHeader + 16 // waveOutGetPosition.pmmt
-    push[hwo] // waveOutGetPosition.hwo
+    push[shader_frag] // waveOutGetPosition.hwo
 
     call waveOutGetPosition    
     call waveOutWrite
