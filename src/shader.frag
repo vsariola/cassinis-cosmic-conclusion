@@ -24,7 +24,7 @@ out vec3 col;
 uniform ivec3 u;
 
 void main() {
-  float i1,j1,t1,r1,v1,a1,s1,m1;
+  float i1,j1,t1,r1,a1,s1,m1;
   vec2 a2, b2,c2,d2;
   vec3 a3, b3,c3,d3,e3,f3,g3;
   ivec3 coord = ivec3(gl_FragCoord);
@@ -102,12 +102,12 @@ void main() {
   for(j1=1;j1<5;j1++) {
     t1 = (coord.x+coord.y*512+u.z+1)/4/48E3+175;
     r1 = min(t1*j1/32+i1/3,9);
-    v1 = mod(r1,1);
-    s1 = t1+(coord.x&2);
-    m1 = 4*sin(exp2(mod(r1-v1,3)/6+8)*t1*j1*i1);
-    for (a1=3;a1<50;s1 += a1 *= 1.02)
-        m1 += sin(s1*a1)/a1;
-    a3 += sin(sin(t1/j1/47)*m1)*exp2(21-13*v1-1/v1-i1/3-j1/3);
+    s1 = mod(r1,1);    
+    m1 = 4*sin(exp2(mod(r1-s1,3)/6+8)*t1*j1*i1);
+    r1 = t1+(coord.x&2);
+    for (a1=3;a1<50;r1 += a1 *= 1.02)
+        m1 += sin(r1*a1)/a1;
+    a3 += sin(sin(t1/j1/47)*m1)*exp2(21-13*s1-1/s1-i1/3-j1/3);
 
   }
   if (0>u.z)
