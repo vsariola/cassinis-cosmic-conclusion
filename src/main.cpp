@@ -40,23 +40,6 @@
 
 extern "C"
 {
-
-  struct MINI_DEVMODE
-  {
-    BYTE _a[36];
-    DWORD dmSize;
-    DWORD dmFields;
-    struct
-    {
-      BYTE _b[4];
-      DWORD pfdFlags;
-    } pfd;
-    BYTE _c[56];
-    DWORD width;
-    DWORD height;
-    BYTE _d[8];
-  };
-
   struct MINI_WAVEHDR
   {
     LPSTR lpData;
