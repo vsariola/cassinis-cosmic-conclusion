@@ -21,7 +21,7 @@
 
 // The result of the shader
 out vec3 col;
-uniform ivec4 u;
+uniform ivec3 u;
 
 void main() {
   float i1,j1,t1,r1,v1,a1,s1,m1;
@@ -100,7 +100,7 @@ void main() {
   
   for(i1=1;i1<4;i1++)
   for(j1=1;j1<5;j1++) {
-    t1 = (coord.x+coord.y*512+u.a)/4/48E3;
+    t1 = (coord.x+coord.y*512+u.z+1)/4/48E3+175;
     r1 = t1*j1/32+i1/3;
     v1 = mod(r1,1);
     s1 = t1+(coord.x&2);
@@ -110,6 +110,6 @@ void main() {
     a3 += sin(sin(r1<9?t1/j1/47:0)*m1)*exp2(21-v1*13-1/v1-i1/3-j1/3);
 
   }
-  if (0<u.a)
+  if (0>u.z)
     col = (ivec3(a3)>>coord.x%2*8)%256/255.;
 }

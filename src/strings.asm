@@ -10,7 +10,7 @@ global _nm_glUseProgram
 _nm_glUseProgram:
 	db "glUseProgram",0
 
-section        .glUniform4i   data    align=1
-global _nm_glUniform4i
-_nm_glUniform4i:
-	db "glUniform4i",0
+section        .glUniform3i   data    align=1
+global _nm_glUniform3i
+_nm_glUniform3i:
+	db "glUniform3i",0

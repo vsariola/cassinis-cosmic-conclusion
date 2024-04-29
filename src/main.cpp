@@ -33,7 +33,10 @@
 #define READ_PIXEL_WIDTH 512
 #define READ_PIXEL_HEIGHT 512
 #define READ_PIXEL_COUNT (READ_PIXEL_WIDTH * READ_PIXEL_HEIGHT)
-#define READ_PIXEL_CALLS (2 * SU_BUFFER_LENGTH + READ_PIXEL_COUNT - 1) / READ_PIXEL_COUNT
+//#define READ_PIXEL_CALLS (2 * SU_BUFFER_LENGTH + READ_PIXEL_COUNT - 1) / READ_PIXEL_COUNT
+#define READ_PIXEL_CALLS 128
+#define TOTAL_PIXELS_READ (READ_PIXEL_CALLS * READ_PIXEL_COUNT)
+#define WAVEBUFFER_LEN (TOTAL_PIXELS_READ*4) // some extra because we're gonna overread
 
 extern "C"
 {
@@ -65,7 +68,7 @@ extern "C"
   };
 
 #pragma bss_seg(".wavbuf")
-  unsigned char waveBuffer[READ_PIXEL_CALLS * READ_PIXEL_COUNT];
+  unsigned char waveBuffer[WAVEBUFFER_LEN];
 #pragma bss_seg(".fragprog")
   GLint fragmentShaderProgram;
 #pragma bss_seg(".hwo")
@@ -99,7 +102,7 @@ extern "C"
 
   extern const char nm_glCreateShaderProgramv[];
   extern const char nm_glUseProgram[];
-  extern const char nm_glUniform4i[];
+  extern const char nm_glUniform3i[];
 
 #pragma data_seg(".fragmentShaders")
 #include <shader.inl>
@@ -185,9 +188,8 @@ int __cdecl main() {
   assert(waveOpenOk == MMSYSERR_NOERROR);
 
   auto done = false;
-  auto readpixel_offset = READ_PIXEL_CALLS * READ_PIXEL_COUNT;
   auto music_saved = false;
-  DWORD time_in_bytes;
+  auto time_in_bytes = -TOTAL_PIXELS_READ;
 
   // Loop until done
   do
@@ -202,35 +204,28 @@ int __cdecl main() {
       TranslateMessage(&msg);
       // Result intentionally ignored
       DispatchMessageA(&msg);
-    }
-
-    // Get current wave position
-    auto waveGetPosOk = waveOutGetPosition(hwo, &waveTime, sizeof(MMTIME));
-    assert(waveGetPosOk == MMSYSERR_NOERROR);    
-    time_in_bytes = waveTime.u.cb;
+    }    
     
     // Use the previously compiled shader program
     ((PFNGLUSEPROGRAMPROC)wglGetProcAddress(nm_glUseProgram))(fragmentShaderProgram);
 
     // Set the uniform values for the shader, giving resolution and time
-    ((PFNGLUNIFORM4IPROC)wglGetProcAddress("glUniform4i"))(
+    ((PFNGLUNIFORM3IPROC)wglGetProcAddress("glUniform3i"))(
         0,
         windowSize.right,
         windowSize.bottom,
-        time_in_bytes,
-        readpixel_offset);
+        time_in_bytes);
 
     // Draws a rect over the entire window with fragment shader providing the gfx
     glRects(-1, -1, 1, 1);
 
-    readpixel_offset -= READ_PIXEL_COUNT;
-    if (readpixel_offset >= 0)
-    {
-      glReadPixels(0, 0, READ_PIXEL_WIDTH, READ_PIXEL_HEIGHT, GL_RED, GL_UNSIGNED_BYTE, waveBuffer + readpixel_offset);
-      continue;
-    }
+    glReadPixels(0, 0, READ_PIXEL_WIDTH, READ_PIXEL_HEIGHT, GL_RED, GL_UNSIGNED_BYTE, waveBuffer + TOTAL_PIXELS_READ + time_in_bytes);
+    time_in_bytes += READ_PIXEL_COUNT;
+    if (time_in_bytes < 0)      
+      continue;    
+    
 #if SAVE_MUSIC
-    else if (!music_saved)
+    if (!music_saved)
     {
         FILE* f = fopen("buffer", "wb");
         fwrite(waveBuffer, sizeof(SUsample), SU_BUFFER_LENGTH, f);
@@ -239,8 +234,14 @@ int __cdecl main() {
     }
 #endif
 
+    // start music
     auto waveWriteOk = waveOutWrite(hwo, (LPWAVEHDR)&waveHeader, 0x20);
     assert(waveWriteOk == MMSYSERR_NOERROR);
+
+    // Get current wave position
+    auto waveGetPosOk = waveOutGetPosition(hwo, &waveTime, sizeof(MMTIME));
+    assert(waveGetPosOk == MMSYSERR_NOERROR);
+    time_in_bytes = waveTime.u.cb;
 
   } while (!GetAsyncKeyState(VK_ESCAPE) && time_in_bytes < SU_LENGTH_IN_SAMPLES * 4);
 
@@ -256,7 +257,7 @@ int __cdecl main() {
 #else
   _asm {
     xor esi, esi
-    mov ebx, READ_PIXEL_CALLS * READ_PIXEL_COUNT
+    mov ebp, -TOTAL_PIXELS_READ
 
     push esi // ExitProcess.uExitCode
 
@@ -330,27 +331,22 @@ int __cdecl main() {
     push offset waveHeader // waveOutWrite.pwh
     push [hwo] // waveOutWrite.hwo
 
+    push 0xC // waveOutGetPosition.cbmmt
+    push offset waveHeader + 16 // waveOutGetPosition.pmmt
+    push[hwo] // waveOutGetPosition.hwo
+
 readloop:
     push 1 // glRects.y2
     push 1 // glRects.x2
     push -1 // glRects.y1
     push -1 // glRects.x1
 
-    push 0xC // waveOutGetPosition.cbmmt
-    push offset waveHeader+16 // waveOutGetPosition.pmmt
-    push [hwo] // waveOutGetPosition.hwo
+    push            ebp // glUniform3i.v2 (time in bytes)
+    push            dword ptr[windowSize.bottom] // glUniform3i.v1
+    push            dword ptr[windowSize.right] // glUniform3i.v0
+    push            esi // glUniform3i.location
 
-    call waveOutGetPosition
-
-    mov  ebp, dword ptr[waveHeader + 20]
-
-    push            ebx // // glUniform4i.v3 (read pixel buffer position)
-    push            ebp // glUniform4i.v2 (time in bytes)
-    push            dword ptr[windowSize.bottom] // glUniform4i.v1
-    push            dword ptr[windowSize.right] // glUniform4i.v0
-    push            esi // glUniform4i.location
-
-    push            offset nm_glUniform4i // wglGetProcAddress.procName
+    push            offset nm_glUniform3i // wglGetProcAddress.procName
 
     push            edi // glUseProgram.pid
 
@@ -366,10 +362,7 @@ readloop:
 
     call            glRects
 
-    sub             ebx, READ_PIXEL_COUNT
-    js              noread
-
-    lea             eax, [waveBuffer+ebx]
+    lea             eax, [waveBuffer + TOTAL_PIXELS_READ + ebp]
     push            eax // glReadPixels.data
     push            GL_UNSIGNED_BYTE // glReadPixels.type
     push            GL_RED // glReadPixels.format
@@ -378,13 +371,16 @@ readloop:
     push            esi // glReadPixels.y
     push            esi // glReadPixels.x
     call            glReadPixels
-    jmp             readloop // this is not absolutely necessary, but guarantees that music starts only after all read pixel calls are finished
+        
+    add             ebp, READ_PIXEL_COUNT
+    js              readloop
 
-  noread:
+    call waveOutGetPosition    
     call waveOutWrite
     call GetAsyncKeyState
     sahf
     js exit
+    mov  ebp, dword ptr[waveHeader + 20]
     cmp ebp, SU_LENGTH_IN_SAMPLES*4
     js mainloop
 
