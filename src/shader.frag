@@ -81,7 +81,7 @@ void main() {
       }
       g3 = abs(g3);
 
-      m1 = 1-smoothstep(.4, .2, abs(s1-2))*(.5+.4*sin(33*s1)*cos(5*s1))*step(0,t1);
+      m1 = 1-smoothstep(.4, .2, abs(2-s1))*(.5+.4*sin(33*s1)*cos(5*s1))*step(0,t1);
       s1 = tanh(55*a2.y);
 
       col = vec3(5, 2, 1)/pow(300.2-300*dot(a3, c3), 2);
@@ -92,7 +92,7 @@ void main() {
       col = sqrt(tanh(
         mix(col,
             g3*smoothstep(2E-1, 0., b2.y*step(0, b2.x)),
-            smoothstep(.4, .2, abs(a1-2))*(a2.x < r1?1-s1:1)*3*g3.y
+            smoothstep(.4, .2, abs(2-a1))*(a2.x < r1?1-s1:1)*3*g3.y
         )*j1*(2-j1)
       ));
   
