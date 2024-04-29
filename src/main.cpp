@@ -325,17 +325,6 @@ int __cdecl main() {
     call waveOutOpen
 
   mainloop:
-    push VK_ESCAPE // GetAsyncKeyState.vKey
-
-    push 0x20 // waveOutWrite.cbwh
-    push offset waveHeader // waveOutWrite.pwh
-    push [hwo] // waveOutWrite.hwo
-
-    push 0xC // waveOutGetPosition.cbmmt
-    push offset waveHeader + 16 // waveOutGetPosition.pmmt
-    push[hwo] // waveOutGetPosition.hwo
-
-readloop:
     push 1 // glRects.y2
     push 1 // glRects.x2
     push -1 // glRects.y1
@@ -373,7 +362,18 @@ readloop:
     call            glReadPixels
         
     add             ebp, READ_PIXEL_COUNT
-    js              readloop
+trampoline:
+    js              mainloop
+
+    push VK_ESCAPE // GetAsyncKeyState.vKey
+
+    push 0x20 // waveOutWrite.cbwh
+    push offset waveHeader // waveOutWrite.pwh
+    push[hwo] // waveOutWrite.hwo
+
+    push 0xC // waveOutGetPosition.cbmmt
+    push offset waveHeader + 16 // waveOutGetPosition.pmmt
+    push[hwo] // waveOutGetPosition.hwo
 
     call waveOutGetPosition    
     call waveOutWrite
@@ -382,7 +382,7 @@ readloop:
     js exit
     mov  ebp, dword ptr[waveHeader + 20]
     cmp ebp, SU_LENGTH_IN_SAMPLES*4
-    js mainloop
+    js trampoline  // this should be js mainloop, but using the earlier js mainloop as a trampoline makes it short & less bytes
 
   exit:
 
