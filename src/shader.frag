@@ -108,8 +108,8 @@ void main() {
     for (a1=3;a1<50;r1 += a1 *= 1.02)
         m1 += sin(r1*a1)/a1;
     a3 += sin(sin(t1/j1/47)*m1)*exp2(21-13*s1-1/s1-i1/3-j1/3);
-
+    if (0>u.z)
+        col = (ivec3(a3)>>coord.x%2*8)%256/255.;
   }
-  if (0>u.z)
-    col = (ivec3(a3)>>coord.x%2*8)%256/255.;
+  
 }
