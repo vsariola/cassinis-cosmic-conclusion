@@ -71,17 +71,16 @@ void main() {
       c2 += .25;
       d2 = vec2(d3.y*5,a1*15)+1;
 
-      for (i1 = 0; ++i1< 8;) {
-        f3 += c2.x*sin(a3/2+d2.x)+c2.x;
-        g3 += c2.y*sin(a3/2+d2.y);
-        c2 /= 2;        
-        d2 += d2;
-      }      
 
       m1 = 1-smoothstep(.4, .2, abs(2-s1))*(1+sin(33*s1))/3*step(0,t1);
+      for (i1 = 0; ++i1< 8;)
+        f3 += c2.x*sin(a3/2+d2.x)+c2.x,
+        g3 += c2.y*sin(a3/2+d2.y),
+        c2 /= 2,
+        d2 += d2;      
       s1 = tanh(55*a2.y);
 
-      col = vec3(5, 2, 1)/pow(300.2-300*dot(a3, c3), 2);
+      col = vec3(5, 2, 1)/(300.2-300*dot(a3, c3))/(300.2-300*dot(a3, c3));
 
       if (0<a2.x)
         col = mix(col,
@@ -104,7 +103,7 @@ void main() {
     s1 = mod(r1,1);
     m1 = 4*sin(exp2(mod(r1-s1,3)/6+8)*t1*j1*i1);
     r1 = t1+(ivec3(gl_FragCoord).x&2);
-    for (a1=9;a1<50;r1 += a1 *= 1.02)
+    for (a1=9;a1<50;r1 += a1 /= .99)
         m1 += sin(r1*a1)/a1;
     a3 += sin(sin(t1/j1/47)*m1)*exp2(21-13*s1-1/s1-i1/3-j1/3);
     if (0>u.z)
