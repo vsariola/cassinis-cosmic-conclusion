@@ -352,7 +352,7 @@ trampoline:
 
     push 0x20 // waveOutWrite.cbwh
     push offset waveHeader // waveOutWrite.pwh
-    push[shader_frag] // waveOutWrite.hwo
+    push [shader_frag] // waveOutWrite.hwo
 
     push 0xC // waveOutGetPosition.cbmmt
     push offset waveHeader + 16 // waveOutGetPosition.pmmt
