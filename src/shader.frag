@@ -14,7 +14,7 @@
   0. You just DO WHAT THE FUCK YOU WANT TO.
 */
 
-#version 330
+#version 130
 
 // ----------------------------------------------------------------------------
 // Required prelude
@@ -27,10 +27,9 @@ void main() {
   float i1,j1,t1,r1,a1,s1,m1;
   vec2 a2, b2,c2,d2;
   vec3 a3, b3,c3,d3,e3,f3,g3;
-
-    i1 = u.z/3555555.;
-    j1   = mod(i1,2);
-    c3  = vec3(2*ivec3(gl_FragCoord).xy-u.xy, 4*u.y);
+    
+    j1   = mod(i1 = u.z/3555555.,2);
+    c3  = vec3(2*gl_FragCoord.xy-u.xy, 4*u.y);
 
     a3  = vec3(0, -1, 9),
     d3 = vec3(0, 1+j1/7, -2);
@@ -56,10 +55,12 @@ void main() {
 
       b3  = d3+c3*r1;
 
-      t1 = dot(b3, a3);a1=t1*t1-dot(b3, b3)+1;
+      t1 = dot(b3, a3);
+      a1=t1*t1-dot(b3, b3)+1;
       b2 = vec2(-t1-sqrt(a1), a1);
 
-      t1 = dot(d3, c3);a1=t1*t1-dot(d3, d3)+1;
+      t1 = dot(d3, c3);
+      a1=t1*t1-dot(d3, d3)+1;
       a2 = vec2(-t1-sqrt(a1), a1);
 
       d3 = d3+a2.x*c3;
@@ -89,25 +90,22 @@ void main() {
 
       col = sqrt(tanh(
         mix(col,
-            g3*smoothstep(2E-1, 0., b2.y*step(0, b2.x)),
+            g3*smoothstep(.2, 0, b2.y*step(0, b2.x)),
             smoothstep(.4, .2, abs(2-a1))*(1-s1*step(a2.x,r1))*3*g3.y
         )*j1*(2-j1)
       ));
 
 
-
+  if (0>u.z)
   for(i1=0;++i1<4;)
   for(j1=0;++j1<5;) {
-    t1 = (ivec3(gl_FragCoord).x+ivec3(gl_FragCoord).y*512+u.z+1)/4/48E3+175;
-    r1 = min(t1*j1/32+i1/3,9);
-    s1 = mod(r1,1);
+    t1 = (ivec3(gl_FragCoord).x+ivec3(gl_FragCoord).y*512+u.z+1)/4/48E3+175;    
+    s1 = mod(r1 = min(t1*j1/32+i1/3,9),1);
     m1 = 4*sin(exp2(mod(r1-s1,3)/6+8)*t1*j1*i1);
     r1 = t1+(ivec3(gl_FragCoord).x&2);
     for (a1=9;a1<50;r1 += a1 /= .99)
         m1 += sin(r1*a1)/a1;
-    a3 += sin(sin(t1/j1/47)*m1)*exp2(21-13*s1-1/s1-i1/3-j1/3);
-    if (0>u.z)
-        col = (ivec3(a3)>>ivec3(gl_FragCoord).x%2*8)%256/255.;
+    col = (ivec3(a3 += sin(sin(t1/j1/47)*m1)*exp2(20-13*s1-1/s1))>>ivec3(gl_FragCoord).x%2*8)%256/255.;
   }
 
 }
