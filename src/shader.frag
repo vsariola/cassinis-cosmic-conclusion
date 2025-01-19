@@ -25,7 +25,7 @@ uniform ivec3 u;
 
 void main() {
   float i1,j1,t1,r1,a1,s1,m1;  
-  vec3 a3, b3,c3,d3,e3,f3,g3;
+  vec3 a3, c3,d3,e3,f3,g3;
     
     j1   = mod(i1 = u.z/18e5,2);
     c3  = vec3(2*gl_FragCoord.xy-u.xy, 4*u.y);
@@ -52,22 +52,25 @@ void main() {
 
       r1 = -d3.y/c3.y;
 
-      b3  = d3+c3*r1;
+      col  = d3+c3*r1;
 
-      t1 = dot(b3, a3);      
-      t1 = -t1-sqrt(a1=t1*t1-dot(b3, b3)+1);
+      t1 = dot(col, a3);      
+      t1 = -t1-sqrt(a1=t1*t1-dot(col, col)+1);
+
+      e3 += .3;      
       m1 = t1*a1;
 
       t1 = dot(d3, c3);      
       t1 = -t1-sqrt(a1=t1*t1-dot(d3, d3)+1);      
 
       s1 = tanh(55*a1);
+      a1 = length(col);
 
 
        d3 = d3+t1*c3;
 
-      e3 += .3;      
-      a1 = length(b3);
+
+
 
       for (i1 = 0;++i1< 9;e3 /= 2)
         f3 += e3.x*sin(a3/4+2*d3.y/e3.y)+e3.x,
@@ -83,7 +86,7 @@ void main() {
       col = sqrt(tanh(
         mix(col,
             g3*smoothstep(.2, 0, max(0, m1)),
-            smoothstep(.4, .2, abs(2-a1))*(1-s1*step(t1,r1))*3*g3.y
+            g3*smoothstep(.4, .2, abs(2-a1))*(1-s1*step(t1,r1))*3
         )*j1*(2-j1)
       ));
 
@@ -93,7 +96,7 @@ void main() {
   for(j1=0;++j1<5;) {    
     t1 = (ivec3(gl_FragCoord).x+ivec3(gl_FragCoord).y*512+u.z+1)/2/48e3+350;
     s1 = mod(r1 = min(t1*j1/32+i1/3,9),1);
-    r1 = 4*sin(exp2(mod(r1-s1,3)/6+8)*t1*j1*i1);
+    r1 = sin(exp2(mod(r1-s1,3)/6+8)*t1*j1*i1)*4;
     for (a1=0;++a1<99;r1 += sin(t1*a1)/a1);        
     col = (ivec3(a3 += sin(sin(t1/j1/47)*r1)*exp2(20-13*s1-1/s1))>>ivec3(gl_FragCoord).x%2*8)%256/255.;
   }
