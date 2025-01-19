@@ -24,9 +24,8 @@ out vec3 col;
 uniform ivec3 u;
 
 void main() {
-  float i1,j1,t1,r1,a1,s1;
-  vec2 a2, b2,c2,d2;
-  vec3 a3, b3,c3,d3,f3,g3;
+  float i1,j1,t1,r1,a1,s1,m1;  
+  vec3 a3, b3,c3,d3,e3,f3,g3;
     
     j1   = mod(i1 = u.z/18e5,2);
     c3  = vec3(2*gl_FragCoord.xy-u.xy, 4*u.y);
@@ -56,35 +55,35 @@ void main() {
       b3  = d3+c3*r1;
 
       t1 = dot(b3, a3);      
-      b2 = vec2(-t1-sqrt(a1=t1*t1-dot(b3, b3)+1), a1);
+      t1 = -t1-sqrt(a1=t1*t1-dot(b3, b3)+1);
+      m1 = t1*a1;
 
       t1 = dot(d3, c3);      
-      a2 = vec2(-t1-sqrt(a1=t1*t1-dot(d3, d3)+1), a1);
+      t1 = -t1-sqrt(a1=t1*t1-dot(d3, d3)+1);      
 
-      d3 += a2.x*c3;
-
-      c2 += .3;
-      d2 = vec2(d3.y,a1 = length(b3))*6;
+      s1 = tanh(55*a1);
 
 
-      for (i1 = 0; ++i1< 8;d2 += d2)
-        f3 += c2.x*sin(a3/2+d2.x)+c2.x,
-        g3 += c2.y*sin(a3/2+d2.y),
-        c2 /= 2;      
+       d3 = d3+t1*c3;
 
-      s1 = tanh(55*a2.y);
+      e3 += .3;      
+      a1 = length(b3);
+
+      for (i1 = 0;++i1< 9;e3 /= 2)
+        f3 += e3.x*sin(a3/4+2*d3.y/e3.y)+e3.x,
+        g3 += e3.y*sin(a3/4+2*a1/e3.y);          
 
       col = vec3(5, 2, 1)/3e3/(1-dot(a3, c3));
 
-      if (0<a2.x)
+      if (0<t1)
         col = mix(col,
             max(0,dot(a3, d3))*f3,
             s1);
 
       col = sqrt(tanh(
         mix(col,
-            g3*smoothstep(.2, 0, b2.y*max(0, b2.x)),
-            smoothstep(.4, .2, abs(2-a1))*(1-s1*step(a2.x,r1))*3*g3.y
+            g3*smoothstep(.2, 0, max(0, m1)),
+            smoothstep(.4, .2, abs(2-a1))*(1-s1*step(t1,r1))*3*g3.y
         )*j1*(2-j1)
       ));
 
