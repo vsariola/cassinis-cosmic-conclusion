@@ -364,7 +364,7 @@ trampoline:
     sahf
     js exit
     mov  ebp, dword ptr[waveHeader + 20]
-    cmp ebp, SU_LENGTH_IN_SAMPLES*4
+    cmp ebp, SU_LENGTH_IN_SAMPLES*2
     js trampoline  // this should be js mainloop, but using the earlier js mainloop as a trampoline makes it short & less bytes
 
   exit:
