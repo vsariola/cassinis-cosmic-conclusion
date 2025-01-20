@@ -287,14 +287,16 @@ _asm {
 
     call GetDC
 
-    xchg edi, eax
+    
 
-    push edi // wglCreateContext.hdc
+    push eax // wglCreateContext.hdc
 
     push esi // SetPixelFormat.ppfd
     push 8 // SetPixelFormat.format
-    push edi // SetPixelFormat.hdc
+    push eax // SetPixelFormat.hdc
 
+
+    xchg edi, eax
     call SetPixelFormat
 
     call wglCreateContext
@@ -362,7 +364,7 @@ trampoline:
 
     push 0xC // waveOutGetPosition.cbmmt
     push offset waveHeader + 16 // waveOutGetPosition.pmmt
-    push[shader_frag] // waveOutGetPosition.hwo
+    push [shader_frag] // waveOutGetPosition.hwo
 
     call waveOutGetPosition    
     call waveOutWrite

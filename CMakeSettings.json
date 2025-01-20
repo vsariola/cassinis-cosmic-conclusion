@@ -72,7 +72,7 @@
     {
       "name": "uncompressed",
       "generator": "Ninja",
-      "configurationType": "MinSizeRel",
+      "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
