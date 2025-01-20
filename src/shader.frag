@@ -14,7 +14,7 @@
   0. You just DO WHAT THE FUCK YOU WANT TO.
 */
 
-#version 130
+#version 330
 
 // ----------------------------------------------------------------------------
 // Required prelude
@@ -24,8 +24,8 @@ out vec3 col;
 uniform ivec3 u;
 
 void main() {
-  float i1,j1,t1,r1,a1,s1,m1;  
-  vec3 a3, c3,d3,e3,f3,g3;
+  float i1,j1,t1,r1,a1,s1,m1,k1;  
+  vec3 a3, c3,d3,f3,g3;
     
     j1   = mod(i1 = u.z/18e5,2);
     c3  = vec3(2*gl_FragCoord.xy-u.xy, 4*u.y);
@@ -36,7 +36,7 @@ void main() {
 
     if (0<i1-2)
         a3  = vec3(3, 2, -3),
-        d3 = vec3(0, .2, -2)*(1+j1*j1),
+        d3 = vec3(0, .2, -2)*(1+j1),
         c3.xy+=c3.yx*vec2(1,-1)*.3;
 
     if (0<i1-4)
@@ -45,7 +45,7 @@ void main() {
 
     if (0<i1-6)
         a3  = -vec3(0, 1, -5),
-        d3 = vec3(0, 1, -5)*(1+j1*j1);
+        d3 = vec3(0, 1, -5)*(1+j1);
 
       c3  = c3/length(c3);
       a3  = a3/length(a3);
@@ -56,8 +56,7 @@ void main() {
 
       t1 = dot(col, a3);      
       t1 = -t1-sqrt(a1=t1*t1-dot(col, col)+1);
-
-      e3 += .3;      
+      
       m1 = t1*a1;
 
       t1 = dot(d3, c3);      
@@ -69,12 +68,10 @@ void main() {
 
        d3 = d3+t1*c3;
 
-
-
-
-      for (i1 = 0;++i1< 9;e3 /= 2)
-        f3 += e3.x*sin(a3/4+2*d3.y/e3.y)+e3.x,
-        g3 += e3.y*sin(a3/4+2*a1/e3.y);          
+      k1=.3;
+      for (i1 = 0;++i1< 9;k1 /= 2)
+        f3 += k1*sin(a3/4+2/k1*d3.y)+k1,
+        g3 += k1*sin(a3/4+2/k1*a1);        
 
       col = vec3(5, 2, 1)/3e3/(1-dot(a3, c3));
 
@@ -85,20 +82,21 @@ void main() {
 
       col = sqrt(tanh(
         mix(col,
-            g3*smoothstep(.2, 0, max(0, m1)),
-            g3*smoothstep(.4, .2, abs(2-a1))*(1-s1*step(t1,r1))*3
+            g3/cosh(9*max(0, m1)),
+            g3/cosh(9*(2-a1))*(1-s1*step(t1,r1))*3
         )*j1*(2-j1)
       ));
 
     
   if (0>u.z)
   for(i1=0;++i1<4;)
-  for(j1=0;++j1<5;) {    
-    t1 = (ivec3(gl_FragCoord).x+ivec3(gl_FragCoord).y*512+u.z+1)/2/48e3+350;
-    s1 = mod(r1 = min(t1*j1/32+i1/3,9),1);
-    r1 = sin(exp2(mod(r1-s1,3)/6+8)*t1*j1*i1)*4;
-    for (a1=0;++a1<99;r1 += sin(t1*a1)/a1);        
-    col = (ivec3(a3 += sin(sin(t1/j1/47)*r1)*exp2(20-13*s1-1/s1))>>ivec3(gl_FragCoord).x%2*8)%256/255.;
-  }
+  for(j1=0;++j1<5;) 
+    t1 = (ivec3(gl_FragCoord).x+ivec3(gl_FragCoord).y*512+u.z+1)/2/48e3+350,
+    s1 = mod(r1 = min(t1*j1/32+i1/3,9),1),
+    col = (ivec3(a3 += sin(
+        sin(t1/j1/48)*(
+            sin(t1*j1*i1*exp2(mod(r1-s1,3)/6+8))*4+sin(t1*3)+sin(t1*11)
+        )    
+    )*exp2(20-13*s1-1/s1))>>ivec3(gl_FragCoord).x%2*8)%256/255.;
 
 }

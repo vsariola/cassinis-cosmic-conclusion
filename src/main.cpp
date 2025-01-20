@@ -238,8 +238,14 @@ int __cdecl main() {
 #endif
 
 #else
+  #ifndef USE_CRINKLER
+_asm {
+    xor eax, eax
+  }
+#endif
+
   _asm {
-    xor esi, esi
+    xchg eax, esi
     mov ebp, -TOTAL_PIXELS_READ
 
     push esi // ExitProcess.uExitCode
