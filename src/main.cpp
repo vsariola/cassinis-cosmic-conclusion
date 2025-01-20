@@ -1,4 +1,4 @@
-/*
+﻿/*
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                     Version 2, December 2004
 
@@ -88,7 +88,7 @@ extern "C"
   extern const char nm_glUniform3i[];
 
 #pragma data_seg(".fragmentShaders")
-#include <shader.inl>
+#include "shader.inl"
 
 #ifdef _DEBUG
   void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const *message, void const *userParam)
