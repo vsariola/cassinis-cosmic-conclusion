@@ -1,4 +1,4 @@
-option(MINIFY_SHADERS "Use shader_minifier6shader.frag instead of the hand-written shader.inl" OFF)
+option(MINIFY_SHADERS "Use shader_minifier+shader.frag instead of the hand-written shader.inl" OFF)
 option(CMAIN "Use the C-written development main instead of inline asm" OFF)
 option(_DEBUG "Define the _DEBUG macro" OFF)
 option(SAVE_MUSIC "Save music to disk" OFF)
@@ -13,7 +13,7 @@ message(STATUS "  SAVE_MUSIC = ${SAVE_MUSIC}")
 message(STATUS "  FULLSCREEN = ${FULLSCREEN}")
 message(STATUS "  COMPRESS_LEVEL = ${COMPRESS_LEVEL}")
 
-set(exename "intro")
+set(exename "cassini")
 
 if (MINIFY_SHADERS)
     find_program(SHADER_MINIFIER NAMES shader_minifier)
