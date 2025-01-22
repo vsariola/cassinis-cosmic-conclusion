@@ -18,7 +18,7 @@ const char *shader_frag =
    "if(s>4)"
      "z=vec3(2,1,9),t=vec3(2,1+d/5,-6);"
    "if(s>6)"
-     "z=vec3(-d,0,6),t=vec3(0,1,-6);"   
+     "z=vec3(-d,0,6),t=vec3(0,1,d-6);"   
    "z/=sqrt(dot(z,z));"
    "e/=sqrt(dot(e,e));"
    "y=-t.y/e.y;"

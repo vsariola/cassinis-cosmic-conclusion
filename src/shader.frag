@@ -40,7 +40,7 @@ void main() {
 
     if (i1>6)
         a3  = vec3(-j1,0,6),
-        d3 = vec3(0,1,-6);
+        d3 = vec3(0,1,j1-6);
 
       c3 /= sqrt(dot(c3,c3));
       a3 /= sqrt(dot(a3,a3));
