@@ -13,7 +13,7 @@
 
 
 out/
-dist/
+dist/*.exe
 build/
 .vs/
 .vscode/
