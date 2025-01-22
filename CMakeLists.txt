@@ -18,12 +18,4 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
-# tell nasm that we want 32-bit OBJ file
-
-if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
-    set(CMAKE_ASM_NASM_OBJECT_FORMAT win32)
-    enable_language(ASM_NASM)
-    # remove flags from nasm as the same compile flags were causing trouble
-    set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <INCLUDES> <DEFINES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
-    add_subdirectory(src)
-endif()
+add_subdirectory(src)
