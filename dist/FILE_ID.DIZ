@@ -1,16 +1,20 @@
-         *      ____          *
-  +           ,``    .     .        +
-    .    ____|#&``    |____
-       ( ____L##&__________ )      *
-     *       |###&``  |
- .         .  `###&_`´     *        .
-     .                         +
+.         .        ___    .           .
+     *         __,`   `.__       .
+          ,---` ##&`    | `---.       +
+.     .   `---._###&______,---`
+                 `##&`,`           *
+ *   .        +              +         .
       Cassini's Cosmic Conclusion
 
     Windows 1k intro @ LoveByte 2025
 
-        Code & Visuals: mrange
-         Code & Music: pestis
+Code&Visuals: mrange  Code&Music: pestis
+
+On September 15, 2017, the Cassini probe
+ended its nearly 20 year journey through
+space by crashing into the atmosphere of
+Saturn. This is a tribute to the persons
+who made the mission possible.
 
 Techniques: raytracing, shader_minifier,
 shader audio, crinkler, shadertoy.
