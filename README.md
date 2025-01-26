@@ -181,11 +181,12 @@ While the slow pace and the phase modulation (fake reverb?) definitely add to
 the space feeliness of this song, it is interesting to note that Hans Zimmer
 used exactly the same bVI-bVII-i chord progression in *Interstellar*. See
 Charles Cornell's [analysis](https://www.youtube.com/watch?v=6AI6PG7oj7E) of it.
-The chord progression stays pretty much the same throughout the song, and all
-the progression comes from adding layers and layers of instruments on top. I had
-seen the above analysis before composing this song, but wasn't actively trying
-to emulate *Interstellar*, except perhaps subconsciously. Yet when I played the
-first prototype of the song to mrange, the reaction was:
+The chord progression stays pretty much the same throughout the Interstellar
+soundtrack, and all the progression comes from adding layers and layers of
+instruments on top. I had seen the above analysis before composing this song,
+but wasn't actively trying to emulate *Interstellar*, except perhaps
+subconsciously. Yet when I played the first prototype of the song to mrange, the
+reaction was:
 
 "gets nice space ambient feels from this"
 
