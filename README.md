@@ -116,7 +116,8 @@ minor, emphasized by the bass climbing up from E to G#.
 #### Effects and movement
 
 So now we have a melody, but the sound is very boring. I wanted reverb and
-followed the inspiration here: phase modulation with Brownian noise creates a
+followed the inspiration here: [phase
+modulation](https://www.shadertoy.com/view/MdjXWc) with Brownian noise creates a
 reverb-like sound. I tried adding some phase modulation to the oscillator:
 `sin(t*f+p)*...`, where `p` was Brownian noise, generated in a brute force
 manner by adding a lot of sine waves with semi-random phases and amplitude
