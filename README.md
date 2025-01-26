@@ -155,11 +155,11 @@ integer, so `/2` does an integer division and thus time advances only every two
 pixels.
 
 Add a bit of gain to the envelope `exp2(5-...)` -> `exp2(20-...)`, so the
-samples are now between -32767 and 32767, and then output the value as `sample
->> ivec3(gl_FragCoord).x % 2 * 8) % 256 / 255.` Every even sample has `>>0`, so
-this outputs the lower byte of the 16-bit sample, and every odd sample has
-`>>8`, so this outputs the higher byte of the 16-bit sample. Then just scale
-this to the 0..1 range.
+samples are now between -32767 and 32767. Then output the sample with
+`sample >> ivec3(gl_FragCoord).x % 2 * 8) % 256 / 255.` Every even sample has
+`>>0`, so this outputs the lower byte of the 16-bit sample, and every odd sample
+ has `>>8`, so this outputs the higher byte of the 16-bit sample. Then just
+scale this to the 0..1 range.
 
 #### Closing words
 
@@ -171,13 +171,15 @@ for(s=0;4>++s;)
     m=(ivec3(gl_FragCoord).x+ivec3(gl_FragCoord).y*512+v.z+1)/2/48e3+350,
     c=mod(y=min(m*d/32+s/3,9),1),
     i=(ivec3(
-         z+=sin(sin(m/d/48)*(sin(m*d*s*exp2(mod(y-c,3)/6+8))*4+sin(m*3)+sin(m*11)))*exp2(20-13*c-1/c)
+         z+=sin(sin(m/d/48)*(
+            sin(m*d*s*exp2(mod(y-c,3)/6+8))*4+sin(m*3)+sin(m*11)
+         ))*exp2(20-13*c-1/c)
       )>>ivec3(gl_FragCoord).x%2*8)%256/255.;
 ```
 
 While the slow pace and the phase modulation (fake reverb?) definitely add to
 the space feeliness of this song, it is interesting to note that Hans Zimmer
-used exactly the same bVI-bVII-i chord progression in *Interstellar*; see
+used exactly the same bVI-bVII-i chord progression in *Interstellar*. See
 Charles Cornell's [analysis](https://www.youtube.com/watch?v=6AI6PG7oj7E) of it.
 The chord progression stays pretty much the same throughout the song, and all
 the progression comes from adding layers and layers of instruments on top. I had
