@@ -192,3 +192,5 @@ reaction was:
 
 It is pretty interesting that such simple equations could convey similar
 feelings to the listener.
+
+![screenshot](screenshot.jpg)
