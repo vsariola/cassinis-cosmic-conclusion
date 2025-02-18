@@ -2,6 +2,14 @@
 
 A windows 1k intro by mrange & pestis.
 
+Capture: https://www.youtube.com/watch?v=QQbY3hU88dQ
+
+Shader toy port: https://www.shadertoy.com/view/tfBGRD
+
+Pouet: https://www.pouet.net/prod.php?which=103546
+
+Demozoo: https://demozoo.org/productions/367582/
+
 ## Prerequisites for building
 
 You need Visual Studio (e.g. 2022), installed with [CMake](https://cmake.org/).
@@ -35,9 +43,11 @@ CMake should copy the executables to the dist/ folder.
 
 ### Work in progress versions
 
-First version of the music: https://www.shadertoy.com/view/lfK3Rt
-
 mrange's "Sunrise on Saturn" shader: https://www.shadertoy.com/view/DldXDX
+
+Early version of the music: https://www.shadertoy.com/view/lfK3Rt
+
+The intro before the sizecoding started: https://www.shadertoy.com/view/3cBGzD
 
 ### Music - pestis
 
